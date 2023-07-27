@@ -1,3 +1,4 @@
+<!-- views/admin/edit_data.php -->
 <div class="row mt-4">
     <div class="col-lg-12 mb-4">
         <h3 class="display-6 mb-2">Edit Artikel</h3>
@@ -23,7 +24,7 @@
                 <?php endif; ?>
             </div>
             <div class="mt-3 text-end">
-                <a href="/Admin/dashboard" class="btn btn-danger">Batal</a>
+                <a href="<?= site_url('Admin/kategori/' . $artikel->id_kategori) ?>" class="btn btn-danger">Batal</a>
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
