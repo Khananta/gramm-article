@@ -10,41 +10,32 @@ class Kategori_Model extends Model
     protected $primaryKey = 'id_kategori';
     protected $allowedFields = ['nama_kategori'];
 
-    // Get articles by id_kategori from the database
+    // dapatin artikel berdasarkan kategori
     public function getArticlesByKategori($id_kategori = null)
     {
         if ($id_kategori === null) {
             return $this->findAll();
-        } else {
-            // Load the db connection
-            $db = db_connect();
-
-            // Query to get articles by id_kategori
-            $query = "SELECT * FROM tb_artikel WHERE id_kategori = ?";
-            $result = $db->query($query, [$id_kategori]);
-
-            if ($result) {
-                return $result->getResultArray();
-            } else {
-                return [];
-            }
         }
+        $db = db_connect();
+        $query = "SELECT * FROM tb_artikel WHERE id_kategori = ?";
+        $result = $db->query($query, [$id_kategori]);
+        return $result ? $result->getResultArray() : [];
     }
+
 
     public function getCategories($id = false)
     {
         if ($id === false) {
-            return $this->findAll();
+            return $this->findAll(); //kalau gak ada id yang ditentukan, maka akan mengambil semua id
         } else {
-            return $this->find($id);
+            return $this->find($id); //kalau ada id yang ditentukan, maka akan mengambil berdasarkan id yang ditentukan
         }
     }
-    public function simpan($data)
+    public function saveCategory($data)
     {
-        $builder = $this->db->table($this->table);
-        return $builder->insert($data);
+        return $this->insert($data);
     }
-    public function hapus($id)
+    public function deleteCategory($id)
     {
         return $this->delete($id);
     }

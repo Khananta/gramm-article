@@ -24,7 +24,7 @@
             // Mengambil angka id_kategori dari URL
             var id_kategori = currentURL.substring(start);
             // URL untuk halaman "tambahData" dengan parameter id_kategori
-            var tambahDataUrl = "/Admin/tambahData?id_kategori=" + id_kategori;
+            var tambahDataUrl = "/Admin/addArticle?id_kategori=" + id_kategori;
             // Mengubah href pada link "Tambah Artikel"
             document.getElementById('tambahArtikelLink').href = tambahDataUrl;
         });
@@ -47,7 +47,7 @@
                                 <?= $article['judul'] ?>
                             </td>
                             <td class="text-end">
-                                <a href="<?= site_url('admin/edit_data/' . $article['id']) ?>"><button
+                                <a href="<?= site_url('admin/editArticle/' . $article['id']) ?>"><button
                                         class="btn btn-primary px-4" type="button">Edit</button></a>
                                 <button class="btn btn-danger mx-2 px-3" type="button"
                                     onclick="konfirmasiHapus(<?= $article['id'] ?>)">Hapus</button>
@@ -71,10 +71,46 @@
     // Inisialisasi CKEditor
     CKEDITOR.replace('konten');
 
-    function konfirmasiHapus(id) {
-        var confirmation = confirm("Apakah Anda yakin ingin menghapus data ini?");
-        if (confirmation) {
-            window.location.href = "<?= site_url('admin/hapus/') ?>" + id;
-        }
+    function konfirmasiHapus(id, id_kategori) {
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin menghapus artikel ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If the user confirms, make an AJAX request to delete the data
+                fetch("<?= site_url('Admin/deleteArticle/') ?>" + id)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            Swal.fire({
+                                title: 'Sukses!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location = "<?= site_url('Admin/category/') ?>" + id_kategori;
+                                location.reload(); // Refresh the page
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message,
+                                icon: 'error',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        });
     }
 </script>

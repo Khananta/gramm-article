@@ -16,54 +16,50 @@ class Admin extends Controller
         ];
         return view('template_admin', $data);
     }
-    public function kategori($id_kategori)
+    public function category($id_kategori)
     {
         $kategoriModel = new Kategori_Model();
         $categories = $kategoriModel->getCategories();
         $articles = $kategoriModel->getArticlesByKategori($id_kategori);
 
-        //cari nama kategori berdasarkan id_kategori yang dipilih
-        $kategori_nama = '';
-        foreach ($categories as $kategori) {
-            if ($kategori['id_kategori'] == $id_kategori) {
-                $kategori_nama = $kategori['nama_kategori'];
-                break;
-            }
-        }
+        // cari nama kategori berdasarkan id_kategori yang dipilih menggunakan array_filter
+        $kategori = array_filter($categories, function ($kategori) use ($id_kategori) {
+            return $kategori['id_kategori'] == $id_kategori;
+        });
 
         $data = [
             'current_page' => 'dashboard',
             'page' => 'admin/kategori',
             'articles' => $articles,
             'categories' => $categories,
-            'kategori_nama' => $kategori_nama
+            'kategori_nama' => !empty($kategori) ? reset($kategori)['nama_kategori'] : ''
         ];
+
         return view('template_admin', $data);
     }
-    public function hapus($id)
+
+    public function deleteArticle($id)
     {
         $model = new User_Model();
-
-        //ambil id_kategori dari artikel yang akan dihapus
         $id_kategori = $model->getArticle($id)->getRow('id_kategori');
 
-        if (isset($id_kategori)) {
-            $model->hapus_data($id);
-            $redirect_url = site_url('Admin/kategori/' . $id_kategori);
-            echo '<script>
-                alert("Selamat! Data berhasil terhapus.");
-                window.location="' . $redirect_url . '"
-            </script>';
+        if ($id_kategori !== null) {
+            $model->deleteDataArticle($id);
+            $response = [
+                'status' => 'success',
+                'message' => 'Selamat! Data berhasil terhapus.'
+            ];
         } else {
-            $redirect_url = site_url('Admin/kategori/' . $id_kategori);
-            echo '<script>
-                alert("Data gagal dihapus.");
-                window.location="' . $redirect_url . '"
-            </script>';
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal dihapus atau tidak ditemukan.'
+            ];
         }
-    }
 
-    public function tambahData()
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function addArticle()
     {
         $data = [
             'current_page' => 'tambah_data',
@@ -71,7 +67,7 @@ class Admin extends Controller
         ];
         return view('template_admin', $data);
     }
-    public function simpanData()
+    public function saveArticle()
     {
         $model = new User_Model();
         $judul = $this->request->getPost('judul');
@@ -80,46 +76,44 @@ class Admin extends Controller
         $id_kategori = $this->request->getPost('id_kategori'); // Ambil id_kategori dari input form
 
         // Proses upload gambar
+        $newName = null;
         if ($gambar->isValid() && !$gambar->hasMoved()) {
             $newName = $gambar->getRandomName();
             $gambar->move(ROOTPATH . 'public/img/', $newName);
-        } else {
-            $newName = null;
         }
 
-        $data = array(
+        $data = [
             'judul' => $judul,
             'konten' => $konten,
             'gambar' => $newName,
             'id_kategori' => $id_kategori
-        );
+        ];
 
-        $model->simpan($data);
+        $model->saveDataArticle($data);
 
-        $redirect_url = site_url('Admin/kategori/' . $id_kategori); // Redirect ke halaman kategori yang sesuai
+        $redirect_url = site_url('Admin/category/' . $id_kategori); // Redirect ke halaman kategori yang sesuai
         echo '<script>
-                alert("Selamat! Berhasil Menambah Data Artikel");
-                window.location="' . $redirect_url . '"
-                </script>';
+            alert("Selamat! Berhasil Menambah Data Artikel");
+            window.location="' . $redirect_url . '"
+            </script>';
     }
-    public function edit($id)
+    public function editArticle($id)
     {
         $model = new User_Model();
-        $getNama = $model->getArticle($id)->getRow();
+        $artikel = $model->getArticle($id)->getRow();
 
-        if ($getNama) {
+        if ($artikel) {
             $data = [
                 'current_page' => 'edit_data',
                 'page' => 'admin/edit_data',
-                'artikel' => $getNama, // Menyimpan data artikel ke dalam array
+                'artikel' => $artikel,
             ];
             return view('template_admin', $data);
         } else {
             die('Data tidak ditemukan.');
         }
     }
-
-    public function updateData()
+    public function updateArticle()
     {
         $model = new User_Model();
 
@@ -132,6 +126,7 @@ class Admin extends Controller
         $getId = $model->getArticle($id)->getRow();
 
         // Proses upload gambar jika ada
+        $newName = $getId->gambar;
         if ($gambar->isValid() && !$gambar->hasMoved()) {
             $newName = $gambar->getRandomName();
             $gambar->move(ROOTPATH . 'public/img/', $newName);
@@ -140,23 +135,20 @@ class Admin extends Controller
             if (!empty($getId->gambar)) {
                 unlink(ROOTPATH . 'public/img/' . $getId->gambar);
             }
-        } else {
-            // Jika tidak ada gambar baru, gunakan gambar yang sudah ada sebelumnya
-            $newName = $getId->gambar;
         }
 
-        $data = array(
+        $data = [
             'judul' => $judul,
             'konten' => $konten,
             'gambar' => $newName
-        );
+        ];
 
         // Panggil fungsi edit dari model dengan parameter data dan id artikel
-        $update = $model->edit($data, $id);
+        $update = $model->editDataArticle($data, $id);
 
         if ($update) {
             // Jika pembaruan berhasil, redirect ke halaman kategori yang sesuai
-            $redirect_url = site_url('Admin/kategori/' . $getId->id_kategori);
+            $redirect_url = site_url('Admin/category/' . $getId->id_kategori);
             echo '
         <script>
             alert("Selamat! Berhasil Mengupdate Data Artikel");
@@ -166,41 +158,41 @@ class Admin extends Controller
             die('Pembaruan data tidak berhasil');
         }
     }
-    public function tambahkategori()
+
+    public function addCategory()
     {
         $model = new Kategori_Model();
         $nama_kat = $this->request->getPost('nama_kategori');
 
-        $data = array(
+        $data = [
             'nama_kategori' => $nama_kat
-        );
+        ];
 
-        $model->simpan($data);
+        $model->saveCategory($data);
         echo '<script>
-                alert("Selamat! Berhasil Menambah Kategori Artikel");
-                window.location="' . base_url('Admin/dashboard') . '"
-            </script>';
+            alert("Selamat! Berhasil Menambah Kategori Artikel");
+            window.location="' . base_url('Admin/dashboard') . '"
+        </script>';
     }
-
-    public function hapuskategori($id)
+    public function deleteCategory($id)
     {
         $model = new Kategori_Model();
         $kategori = $model->getCategories($id);
 
         if ($kategori !== null) {
-            $model->hapus($id);
-            $redirect_url = site_url('Admin/dashboard'); // Redirect to the category main page after successful deletion
-            echo '<script>
-            alert("Selamat! Data berhasil terhapus.");
-            window.location="' . $redirect_url . '"
-        </script>';
+            $model->deleteCategory($id);
+            $response = [
+                'status' => 'success',
+                'message' => 'Selamat! Data berhasil terhapus.'
+            ];
         } else {
-            // Jika data kategori tidak ditemukan, maka redirect kembali ke halaman kategori utama
-            $redirect_url = site_url('Admin/dashboard');
-            echo '<script>
-            alert("Data gagal dihapus atau tidak ditemukan.");
-            window.location="' . $redirect_url . '"
-        </script>';
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal dihapus atau tidak ditemukan.'
+            ];
         }
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 }

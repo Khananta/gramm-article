@@ -1,7 +1,8 @@
-<?php 
+<?php
 namespace App\Models;
+
 use CodeIgniter\Model;
- 
+
 class User_Model extends Model
 {
     protected $table = 'tb_artikel';
@@ -17,21 +18,18 @@ class User_Model extends Model
         }
     }
 
-    public function simpan($data)
+    public function saveDataArticle($data)
     {
-        $builder = $this->db->table($this->table);
-        return $builder->insert($data);
+        return $this->insert($data);
     }
 
-    public function edit($data, $id)
+    public function editDataArticle($data, $id)
     {
-        $builder = $this->db->table($this->table);
-        $builder->where('id', $id);
-        return $builder->update($data);
+        return $this->db->table($this->table)->update($data, ['id' => $id]);
     }
-    public function hapus_data($id)
+
+    public function deleteDataArticle($id)
     {
-        $builder = $this->db->table($this->table);
-        return $builder->delete(['id' => $id]);
+        return $this->delete($id);
     }
 }

@@ -2,7 +2,8 @@
 <div class="row mt-4">
     <div class="col-lg-12 mb-4">
         <h3 class="display-6 mb-2">Edit Artikel</h3>
-        <form method="POST" action="<?= site_url('admin/updateData') ?>" enctype="multipart/form-data">
+        <form method="POST" action="<?= site_url('admin/updateArticle') ?>" enctype="multipart/form-data"
+            onsubmit="return validateForm()">
             <input type="hidden" name="id" value="<?= $artikel->id ?>">
             <div class="form-group my-2">
                 <label for="judul">Judul</label>
@@ -14,28 +15,38 @@
             </div>
             <div class="form-group my-2">
                 <label for="gambar">Gambar</label>
-                <?php if (!empty($artikel->gambar)) : ?>
+                <?php if (!empty($artikel->gambar)): ?>
                     <div class="mb-2">
-                        <img src="<?= base_url('/img/' . $artikel->gambar) ?>" alt="Gambar saat ini" style="max-width: 200px;">
+                        <img src="<?= base_url('/img/' . $artikel->gambar) ?>" alt="Gambar saat ini"
+                            style="max-width: 200px;">
                     </div>
                     <input type="file" class="form-control" id="gambar" name="gambar">
-                <?php else : ?>
+                <?php else: ?>
                     <input type="file" class="form-control" id="gambar" name="gambar" required>
                 <?php endif; ?>
             </div>
             <div class="mt-3 text-end">
-                <a href="<?= site_url('Admin/kategori/' . $artikel->id_kategori) ?>" class="btn btn-danger">Batal</a>
+                <a href="<?= site_url('Admin/category/' . $artikel->id_kategori) ?>" class="btn btn-danger">Batal</a>
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Tambahkan ini pada bagian head halaman Anda -->
 <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
 
-<!-- Tambahkan ini sebelum tag penutup </body> -->
 <script>
     // Inisialisasi CKEditor
     CKEDITOR.replace('konten');
+
+    function validateForm() {
+        const judulValue = document.getElementById("judul").value;
+
+        if (judulValue.trim() === "") {
+            alert("Maaf, judul tidak boleh kosong");
+            return false;
+        }
+
+        return true;
+    }
 </script>

@@ -16,7 +16,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="<?= site_url('Admin/tambahkategori') ?>">
+                    <form method="post" action="<?= site_url('Admin/addCategory') ?>">
                         <div class="input-group">
                             <input type="text" name="nama_kategori" class="form-control"
                                 placeholder="Masukkan Judul Kategori.." required>
@@ -53,7 +53,7 @@
                     <div class="col-lg-3 g-4">
                         <div class="card">
                             <div class="card-body">
-                                <a href="<?= site_url('Admin/kategori/' . $id) ?>" style="text-decoration: none; color:black">
+                                <a href="<?= site_url('Admin/category/' . $id) ?>" style="text-decoration: none; color:black">
                                     <p>
                                         <?= $title ?>
                                     </p>
@@ -73,11 +73,49 @@
         </div>
     </div>
 </div>
+<!-- Add this in the head section of your HTML file -->
+
 <script>
     function konfirmasiHapus(id) {
-        var confirmation = confirm("Apakah Anda yakin ingin menghapus data ini?");
-        if (confirmation) {
-            window.location.href = "<?= site_url('Admin/hapuskategori/') ?>" + id;
-        }
+        Swal.fire({
+            title: 'Apakah Anda yakin ingin menghapus kategori ini?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // If the user confirms, make an AJAX request to delete the data
+                fetch("<?= site_url('Admin/deleteCategory/') ?>" + id)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            Swal.fire({
+                                title: 'Sukses!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                window.location = "<?= site_url('Admin/dashboard') ?>";
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message,
+                                icon: 'error',
+                                confirmButtonColor: '#3085d6',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            }
+        });
     }
 </script>
+
