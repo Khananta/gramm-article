@@ -8,7 +8,6 @@ class User_Model extends Model
     protected $table = 'tb_artikel';
     protected $primaryKey = 'id';
     protected $allowedFields = ['judul', 'konten', 'gambar', 'id_kategori'];
-
     public function getArticle($id = false)
     {
         if ($id === false) {

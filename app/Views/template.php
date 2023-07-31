@@ -24,7 +24,7 @@
     <!-- NAVBAR -->
     <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
+            <a class="navbar-brand fw-bold" href="/User/home">
                 <span class="text-danger">Gra</span>mm</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,37 +41,30 @@
                             aria-expanded="false">
                             Kategori
                         </a>
-                        <div class="dropdown">
-                            <ul class="dropdown-menu">
-                                <?php
-                                $host = 'localhost';
-                                $user = 'root';
-                                $password = '';
-                                $database = 'artikel';
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <?php
+                            $db = db_connect();
+                            $query = "SELECT * FROM tb_kategori";
+                            $result = $db->query($query);
 
-                                $conn = mysqli_connect($host, $user, $password, $database);
-                                if (!$conn) {
-                                    die('Koneksi ke database gagal: ' . mysqli_connect_error());
+                            if (!$result) {
+                                die('Koneksi ke database gagal: ' . mysqli_connect_error());
+                            }
+
+                            if ($result->getNumRows() > 0) {
+                                foreach ($result->getResult() as $row) {
+                                    $id = $row->id_kategori;
+                                    $title = $row->nama_kategori;
+                                    echo '<a class="dropdown-item" href="' . site_url('User/artkat/' . $id) . '">' . $title . '</a>';
                                 }
-
-                                // Query untuk mendapatkan data kategori
-                                $query = "SELECT * FROM tb_kategori";
-                                $result = mysqli_query($conn, $query);
-
-                                if (!$result) {
-                                    die('Query tidak berhasil: ' . mysqli_error($conn));
-                                }
-
-                                // Looping untuk menampilkan opsi-opsi kategori dalam dropdown menu
-                                while ($row = mysqli_fetch_assoc($result)) {
-                                    $title = $row['nama_kategori'];
-                                    echo '<li><a class="dropdown-item" href="#" data-value="' . $title . '">' . $title . '</a></li>';
-                                }
-                                ?>
-                            </ul>
+                            } else {
+                                $empty = "Tidak ada data yang ditemukan.";
+                                echo '<p class="mt-5 mb-5 pb-5 text-center fs-6 pt-5">' . $empty . '</p>';
+                            }
+                            ?>
                         </div>
-
                     </li>
+
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
@@ -92,7 +85,6 @@
             </div>
         </div>
     </nav>
-    <!-- AKHIR NAVBAR -->
 
     <div class="contain">
         <div>
@@ -119,14 +111,12 @@
                         </a>
                     </div>
                     <div class="col-xl-2 offset-xl-2 py-5 col-lg-2 offset-lg-1 col-md-2 col-sm-3">
-                        <h1 class="fw-bolder" style="color: #fff;">Gra<span style="color: #F91111;">mm</span></h1>
+                        <h1 class="fw-bolder" style="color: #F91111;">Gra<span style="color: #fff;">mm</span></h1>
                     </div>
                     <div
                         class="col-xl-2 offset-xl-3 py-5 col-lg-2 offset-lg-3 col-md-3 offset-md-1 col-sm-12 d-sm-none d-md-block d-lg-block">
                         <p class="fw-bolder" style="color: white;">© 2023 Gramm</p>
                     </div>
-
-
                 </div>
             </div>
         </div>

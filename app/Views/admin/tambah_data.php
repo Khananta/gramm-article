@@ -34,6 +34,7 @@
         var editorData = CKEDITOR.instances.konten.getData();
         var judulInput = document.querySelector('input[name="judul"]');
         var gambarInput = document.getElementById('gambar');
+        var allowedExtensions = /(\.png|\.jpg|\.jpeg)$/i;
 
         if (editorData.trim() === '') {
             alert('Konten Artikel tidak boleh kosong.');
@@ -49,13 +50,11 @@
             alert('Anda harus memilih gambar untuk artikel.');
             return;
         }
-
-        var allowedExtensions = /(\.png|\.jpg|\.jpeg)$/i;
+        
         if (!allowedExtensions.exec(gambarInput.value)) {
             alert('Format gambar tidak valid. Hanya gambar dengan format PNG, JPG, dan JPEG yang diperbolehkan.');
             return;
         }
-
         document.querySelector('form').submit();
     }
 </script>

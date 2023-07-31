@@ -41,7 +41,7 @@
                     <?php foreach ($articles as $article): ?>
                         <tr>
                             <td class="pb-4">
-                                <img src="/img/<?= $article['gambar'] ?>" alt="Card Image" width="200px" class="rounded-1">
+                                <img src="/img/<?= $article['gambar'] ?>" alt="Card Image" width="200px" height="115px" class="rounded-1">
                             </td>
                             <td>
                                 <?= $article['judul'] ?>
