@@ -64,7 +64,7 @@
                             $timestamp = $row['timestamp']; // Kolom timestamp pada tabel
                     
                             // Mengubah format timestamp menjadi format tanggal dan jam yang sesuai
-                            $uploadedDate = date('d/m/Y', strtotime($timestamp));
+                            $uploadedDate = date('d M Y', strtotime($timestamp));
                             $uploadedTime = date('H:i', strtotime($timestamp));
 
                             // Membatasi panjang judul
@@ -144,7 +144,7 @@
                     $timestamp = $row['timestamp']; // Kolom timestamp pada tabel
             
                     // Mengubah format timestamp menjadi format tanggal dan jam yang sesuai
-                    $uploadedDate = date('d/m/Y', strtotime($timestamp));
+                    $uploadedDate = date('d M Y', strtotime($timestamp));
                     $uploadedTime = date('H:i', strtotime($timestamp));
 
                     // Membatasi panjang judul

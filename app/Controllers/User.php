@@ -38,7 +38,6 @@ class User extends BaseController
             return view('errors/html/error_404');
         }
     }
-
     public function artkat($id_kategori)
     {
         $kategoriModel = new Kategori_Model();
@@ -58,6 +57,6 @@ class User extends BaseController
             'kategori_nama' => !empty($kategori) ? reset($kategori)['nama_kategori'] : ''
         ];
 
-        return view('template', $data);
+        return view('template_kategori', $data);
     }
 }

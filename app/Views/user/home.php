@@ -84,7 +84,7 @@
                             $article_id_slide = $row_popular_slide['id']; // Simpan ID artikel
                             ?>
 
-                            <a href="<?php echo base_url('user/artikel/' . $article_id_slide); ?>"
+                            <a href="<?php echo base_url('/User/artikel/' . $article_id_slide); ?>"
                                 style="text-decoration: none;">
                                 <div class="carousel-item <?php echo ($active_slide ? 'active' : ''); ?>">
                                     <img src="<?php echo $image_popular_slide; ?>" class="d-block w-100 rounded-2"

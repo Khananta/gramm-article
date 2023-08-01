@@ -21,8 +21,6 @@ class Kategori_Model extends Model
         $result = $db->query($query, [$id_kategori]);
         return $result ? $result->getResultArray() : [];
     }
-
-
     public function getCategories($id = false)
     {
         if ($id === false) {

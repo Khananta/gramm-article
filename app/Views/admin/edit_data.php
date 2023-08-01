@@ -1,9 +1,7 @@
-<!-- views/admin/edit_data.php -->
 <div class="row mt-4">
     <div class="col-lg-12 mb-4">
         <h3 class="display-6 mb-2">Edit Artikel</h3>
-        <form method="POST" action="<?= site_url('admin/updateArticle') ?>" enctype="multipart/form-data"
-            onsubmit="return validateForm()">
+        <form method="POST" action="<?= site_url('admin/updateArticle') ?>" enctype="multipart/form-data" onsubmit="return validateForm()">
             <input type="hidden" name="id" value="<?= $artikel->id ?>">
             <div class="form-group my-2">
                 <label for="judul">Judul</label>
@@ -15,14 +13,13 @@
             </div>
             <div class="form-group my-2">
                 <label for="gambar">Gambar</label>
-                <?php if (!empty($artikel->gambar)): ?>
+                <?php if (empty($artikel->gambar)): ?>
+                    <input type="file" class="form-control" id="gambar" name="gambar" required>
+                <?php else: ?>
                     <div class="mb-2">
-                        <img src="<?= base_url('/img/' . $artikel->gambar) ?>" alt="Gambar saat ini"
-                            style="max-width: 200px;">
+                        <img src="<?= base_url('/img/' . $artikel->gambar) ?>" alt="Gambar saat ini" style="max-width: 200px;">
                     </div>
                     <input type="file" class="form-control" id="gambar" name="gambar">
-                <?php else: ?>
-                    <input type="file" class="form-control" id="gambar" name="gambar" required>
                 <?php endif; ?>
             </div>
             <div class="mt-3 text-end">
@@ -40,9 +37,9 @@
     CKEDITOR.replace('konten');
 
     function validateForm() {
-        const judulValue = document.getElementById("judul").value;
+        const judulValue = document.getElementById("judul").value.trim();
 
-        if (judulValue.trim() === "") {
+        if (judulValue === "") {
             alert("Maaf, judul tidak boleh kosong");
             return false;
         }

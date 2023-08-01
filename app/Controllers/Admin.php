@@ -37,7 +37,6 @@ class Admin extends Controller
 
         return view('template_admin', $data);
     }
-
     public function deleteArticle($id)
     {
         $model = new User_Model();
