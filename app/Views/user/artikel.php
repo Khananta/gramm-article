@@ -6,14 +6,18 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb text-dark">
                         <li class="breadcrumb-item"><a href="/" style="text-decoration:none">Beranda</a></li>
-                        <li class="breadcrumb-item fw-bold" aria-current="page"><?php echo $artikel["judul"];?></li>
+                        <li class="breadcrumb-item fw-bold" aria-current="page">
+                            <?php echo $artikel["judul"]; ?>
+                        </li>
                     </ol>
                 </nav>
                 <h1 class="fw-bold">
                     <?php echo $artikel["judul"]; ?>
                 </h1>
+
                 <p>
-                    <?php echo date('d/m/Y H:i', strtotime($artikel["timestamp"])); ?>
+                    <i class="fas fa-calendar-alt"></i>
+                    <?php echo date('d M Y H:i', strtotime($artikel["timestamp"])); ?>
                 </p>
             </div>
         </div>
@@ -26,9 +30,9 @@
     <div class="container">
         <div class="row">
             <div class="col-8">
-                <img src="/img/<?php echo $artikel['gambar']; ?>" alt="Sampul" class="img-fluid rounded-1" /> 
+                <img src="/img/<?php echo $artikel['gambar']; ?>" alt="Sampul" class="img-fluid rounded-1" />
                 <div class="mt-3">
-                    <?php echo(htmlspecialchars_decode($artikel["konten"])); ?>
+                    <?php echo (htmlspecialchars_decode($artikel["konten"])); ?>
                 </div>
             </div>
             <div class="col-4">
@@ -77,9 +81,9 @@
                             echo '<a href="' . base_url('user/artikel/' . $row['id']) . '" style="text-decoration:none">';
                             echo '<div class="card">';
                             echo '<img src="' . $image . '" class="card-img-top img-fluid" alt="Card Image">';
-                            echo '<div class="card-body">';
-                            echo '<p class="card-text mb-0 fs-6">' . $uploadedDate . ' ' . $uploadedTime . '</p>';
+                            echo '<div class="card-body">';                          
                             echo '<h5 class="card-title fs-5 fw-semibold">' . $title . '</h5>';
+                            echo '<p class="card-text mb-0 fs-6">' . '<i class="fa-solid fa-calendar-days" style="color: black;"></i> ' . $uploadedDate . ' ' . $uploadedTime . '</p>';
                             echo '</div>';
                             echo '</div>';
                             echo '</a>';

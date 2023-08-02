@@ -15,14 +15,7 @@ class User extends BaseController
         ];
         return view('template', $data);
     }
-    public function search()
-    {
-        $data = [
-            'current_page' => 'search',
-            'page' => 'user/search', 
-        ];
-        return view('template', $data);
-    }
+
     public function artikel($id)
     {
         $artikelModel = new User_Model();
