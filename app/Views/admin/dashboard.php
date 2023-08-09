@@ -7,7 +7,6 @@
         </button>
     </div>
 
-    <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -18,7 +17,8 @@
                 <div class="modal-body">
                     <form method="post" action="<?= site_url('Admin/addCategory') ?>">
                         <div class="input-group">
-                            <input type="text" name="nama_kategori" class="form-control" placeholder="Masukkan Judul Kategori.." required>
+                            <input type="text" name="nama_kategori" class="form-control"
+                                placeholder="Masukkan Judul Kategori.." required>
                         </div>
                 </div>
                 <div class="modal-footer">
@@ -43,18 +43,21 @@
                 foreach ($result->getResult() as $row) {
                     $id = $row->id_kategori;
                     $title = $row->nama_kategori;
-            ?>
+                    ?>
                     <div class="col-lg-3 g-4">
                         <div class="card">
                             <div class="card-body">
                                 <a href="<?= site_url('Admin/category/' . $id) ?>" style="text-decoration: none; color:black">
-                                    <p><?= $title ?></p>
+                                    <p>
+                                        <?= $title ?>
+                                    </p>
                                 </a>
-                                <button class="btn btn-danger mx-2 px-3" type="button" onclick="konfirmasiHapus(<?= $id ?>)">Hapus</button>
+                                <button class="btn btn-danger mx-2 px-3" type="button"
+                                    onclick="konfirmasiHapus(<?= $id ?>)">Hapus</button>
                             </div>
                         </div>
                     </div>
-            <?php
+                    <?php
                 }
             }
             ?>

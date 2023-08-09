@@ -19,7 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
-    <title>Gramm</title>
+<title>Gramm</title>
 </head>
 
 <body>
@@ -66,22 +66,26 @@
                             ?>
                         </div>
                     </li>
-                    <li class="nav-item dropdown">
+                    <!-- <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             Filter
                         </a>
-                        <ul class="dropdown-menu bg-dark">
+                        <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item text-danger fw-semibold"
-                                    href="">Terbaru</a>
+                                <a class="dropdown-item"
+                                    href="<?= site_url('User/artkat/' . $id . '?filter=terbaru'); ?>">
+                                    Terbaru
+                                </a>
                             </li>
                             <li>
-                                <a class="dropdown-item text-danger fw-semibold"
-                                    href="">Terlama</a>
+                                <a class="dropdown-item"
+                                    href="<?= site_url('User/artkat/' . $id . '?filter=terlama'); ?>">
+                                    Terlama
+                                </a>
                             </li>
                         </ul>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
         </div>

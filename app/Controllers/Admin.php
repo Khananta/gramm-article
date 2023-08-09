@@ -28,7 +28,7 @@ class Admin extends Controller
         });
 
         $data = [
-            'current_page' => 'dashboard',
+            'current_page' => 'category',
             'page' => 'admin/kategori',
             'articles' => $articles,
             'categories' => $categories,
@@ -72,9 +72,9 @@ class Admin extends Controller
         $judul = $this->request->getPost('judul');
         $konten = $this->request->getPost('konten');
         $gambar = $this->request->getFile('gambar');
-        $id_kategori = $this->request->getPost('id_kategori'); // Ambil id_kategori dari input form
+        $id_kategori = $this->request->getPost('id_kategori'); // ambil id_kategori dari input form
 
-        // Proses upload gambar
+        // proses upload gambar
         $newName = null;
         if ($gambar->isValid() && !$gambar->hasMoved()) {
             $newName = $gambar->getRandomName();
@@ -90,7 +90,7 @@ class Admin extends Controller
 
         $model->saveDataArticle($data);
 
-        $redirect_url = site_url('Admin/category/' . $id_kategori); // Redirect ke halaman kategori yang sesuai
+        $redirect_url = site_url('Admin/category/' . $id_kategori); // redirect ke halaman kategori yang sesuai
         echo '<script>
             alert("Selamat! Berhasil Menambah Data Artikel");
             window.location="' . $redirect_url . '"
@@ -116,7 +116,7 @@ class Admin extends Controller
     {
         $model = new User_Model();
 
-        // Ambil data yang dikirim melalui POST
+        // ambil data yang dikirim melalui POST
         $id = $this->request->getPost('id');
         $judul = $this->request->getPost('judul');
         $konten = $this->request->getPost('konten');
@@ -124,13 +124,13 @@ class Admin extends Controller
 
         $getId = $model->getArticle($id)->getRow();
 
-        // Proses upload gambar jika ada
+        // proses upload gambar jika ada
         $newName = $getId->gambar;
         if ($gambar->isValid() && !$gambar->hasMoved()) {
             $newName = $gambar->getRandomName();
             $gambar->move(ROOTPATH . 'public/img/', $newName);
 
-            // Hapus gambar sebelumnya jika ada
+            // hapus gambar sebelumnya jika ada
             if (!empty($getId->gambar)) {
                 unlink(ROOTPATH . 'public/img/' . $getId->gambar);
             }
@@ -142,11 +142,11 @@ class Admin extends Controller
             'gambar' => $newName
         ];
 
-        // Panggil fungsi edit dari model dengan parameter data dan id artikel
+        // panggil fungsi edit dari model dengan parameter data dan id artikel
         $update = $model->editDataArticle($data, $id);
 
         if ($update) {
-            // Jika pembaruan berhasil, redirect ke halaman kategori yang sesuai
+            // jika pembaruan berhasil, redirect ke halaman kategori yang sesuai
             $redirect_url = site_url('Admin/category/' . $getId->id_kategori);
             echo '
         <script>

@@ -11,7 +11,7 @@ class User extends BaseController
     {
         $data = [
             'current_page' => 'home',
-            'page' => 'user/home', 
+            'page' => 'user/home',
         ];
         return view('template', $data);
     }
@@ -20,7 +20,7 @@ class User extends BaseController
     {
         $artikelModel = new User_Model();
         $article = $artikelModel->find($id);
-        
+
         if ($article) {
             $data = [
                 'page' => 'user/artikel',
@@ -36,6 +36,18 @@ class User extends BaseController
         $kategoriModel = new Kategori_Model();
         $categories = $kategoriModel->getCategories();
         $articles = $kategoriModel->getArticlesByKategori($id_kategori);
+
+        // Tambahkan logika pengurutan
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
+        if ($sort === 'asc') {
+            usort($articles, function ($a, $b) {
+                return strtotime($a['timestamp']) - strtotime($b['timestamp']);
+            });
+        } elseif ($sort === 'desc') {
+            usort($articles, function ($a, $b) {
+                return strtotime($b['timestamp']) - strtotime($a['timestamp']);
+            });
+        }
 
         // cari nama kategori berdasarkan id_kategori yang dipilih menggunakan array_filter
         $kategori = array_filter($categories, function ($kategori) use ($id_kategori) {

@@ -8,27 +8,26 @@
                 <input type="text" name="judul" class="form-control" placeholder="Judul Artikel" required>
             </div>
             <div class="input-group mt-2 col-6">
-                <textarea name="konten" class="form-control" placeholder="Konten Artikel" id="konten" required></textarea>
+                <textarea name="konten" class="form-control" placeholder="Konten Artikel" id="konten"
+                    required></textarea>
             </div>
             <div class="input-group mt-4">
                 <input type="file" name="gambar" class="form-control" id="gambar" accept=".png, .jpg, .jpeg" required>
             </div>
             <div class="mt-4 text-end">
-                <a href="<?= site_url('Admin/category/' . $_GET['id_kategori']) ?>" class="btn btn-danger" style="text-decoration: none;">Batal</a>
+                <a href="<?= site_url('Admin/category/' . $_GET['id_kategori']) ?>" class="btn btn-danger"
+                    style="text-decoration: none;">Batal</a>
                 <button type="button" class="btn btn-primary" onclick="validateForm()">Simpan</button>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Tambahkan ini pada bagian head halaman Anda -->
 <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
 
 <script>
-    // Inisialisasi CKEditor
     CKEDITOR.replace('konten');
 
-    // Fungsi untuk melakukan validasi sebelum mengirimkan formulir
     function validateForm() {
         var editorData = CKEDITOR.instances.konten.getData().trim();
         var judulInput = document.querySelector('input[name="judul"]');
@@ -49,7 +48,7 @@
             alert('Anda harus memilih gambar untuk artikel.');
             return;
         }
-        
+
         if (!allowedExtensions.exec(gambarInput.value)) {
             alert('Format gambar tidak valid. Hanya gambar dengan format PNG, JPG, dan JPEG yang diperbolehkan.');
             return;

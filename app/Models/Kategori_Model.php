@@ -11,15 +11,22 @@ class Kategori_Model extends Model
     protected $allowedFields = ['nama_kategori'];
 
     // dapatin artikel berdasarkan kategori
-    public function getArticlesByKategori($id_kategori = null)
+    public function getArticlesByKategori($id_kategori = null, $search = '')
     {
         if ($id_kategori === null) {
             return $this->findAll();
         }
-        $db = db_connect();
-        $query = "SELECT * FROM tb_artikel WHERE id_kategori = ?";
-        $result = $db->query($query, [$id_kategori]);
-        return $result ? $result->getResultArray() : [];
+
+        $builder = $this->db->table('tb_artikel');
+        $builder->where('id_kategori', $id_kategori);
+
+        // menambah filter pencarian jika ada input search
+        if (!empty($search)) {
+            $builder->like('judul', $search);
+            $builder->orLike('konten', $search);
+        }
+
+        return $builder->get()->getResultArray();
     }
     public function getCategories($id = false)
     {

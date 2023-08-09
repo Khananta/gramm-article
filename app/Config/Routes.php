@@ -31,18 +31,9 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('Admin/dashboard', 'Admin::dashboard', ['filter' => 'login']);
-$routes->get('Admin/tambahData', 'Admin::tambahData', ['filter' => 'login']);
-$routes->get('admin/hapus/(:segment)', 'Admin::hapus/$1');
-$routes->get('admin/edit_data/(:num)', 'Admin::edit/$1');
-
-$routes->get('home/terbaru', 'User::terbaru');
-$routes->get('home/terlama', 'User::terlama');
-
-$routes->get('user/artikel/(:segment)', 'User::artikel/$1');
-
-
-
-
+$routes->get('Admin/addArticle', 'Admin::addArticle', ['filter' => 'login']);
+$routes->get('/Admin/editArticle/(:num)', 'Admin::editArticle/$1', ['filter' => 'login']);
+$routes->get('Admin/category/(:num)', 'Admin::category/$1', ['filter' => 'login']);
 
 
 /*

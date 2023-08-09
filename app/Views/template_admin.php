@@ -45,8 +45,8 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto nav">
                     <li class="nav-item">
-                        <!-- <a class="nav-link <?= ($current_page === 'dashboard') ? 'active' : '' ?>"
-                            href="/Admin/dashboard">Beranda</a> -->
+                        <a class="nav-link <?= ($current_page === 'dashboard') ? 'active' : '' ?>"
+                            href="/Admin/dashboard">Beranda</a>
                     </li>
                 </ul>
                 <a href="/logout">
@@ -67,25 +67,6 @@
         </div>
     </div>
     <footer>
-        <!-- <div class="container-fluid mt-5" style="background-color: #111;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-3 py-5 col-lg-4 col-md-5 col-sm-6">
-                        <i class="fa-brands fa-instagram px-4 fa-2x" style="color: #ffffff;"></i>
-                        <i class="fa-brands fa-facebook px-4 fa-2x" style="color: #ffffff;"></i>
-                        <i class="fa-brands fa-twitter px-4 fa-2x" style="color: #ffffff;"></i>
-                    </div>
-                    <div class="col-xl-2 offset-xl-2 py-5 col-lg-2 offset-lg-1 col-md-2 col-sm-3">
-                        <h1 class="fw-bolder" style="color: #fff;">Gra<span style="color: #F91111;">mm</span></h1>
-                    </div>
-                    <div
-                        class="col-xl-2 offset-xl-3 py-5 col-lg-2 offset-lg-3 col-md-3 offset-md-1 col-sm-12 d-sm-none d-md-block d-lg-block">
-                        <p class="fw-bolder" style="color: white;">© 2023 Gramm</p>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
         <div class="container-fluid  mt-5" style="background-color: #EEEDED;">
             <div class="container">
                 <div class="row">

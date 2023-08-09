@@ -1,5 +1,6 @@
 <div class="row align-items-center mb-3 mt-5">
     <div class="col">
+        <a href="/Admin/dashboard" style="text-decoration:none;" class="fs-5"><i class="fa-solid fa-arrow-left text-decoration:none;"></i> Kembali</a>
         <h1>List Artikel</h1>
         <?php if (isset($kategori_nama)): ?>
             <p>Kategori
@@ -17,15 +18,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Mendapatkan URL saat ini
+            // mendapatkan URL saat ini
             var currentURL = window.location.href;
-            // Mencari posisi awal angka id_kategori
+            // mencari posisi awal angka id_kategori
             var start = currentURL.lastIndexOf('/') + 1;
-            // Mengambil angka id_kategori dari URL
+            // mengambil angka id_kategori dari URL
             var id_kategori = currentURL.substring(start);
             // URL untuk halaman "tambahData" dengan parameter id_kategori
             var tambahDataUrl = "/Admin/addArticle?id_kategori=" + id_kategori;
-            // Mengubah href pada link "Tambah Artikel"
+            // mengubah href pada link "Tambah Artikel"
             document.getElementById('tambahArtikelLink').href = tambahDataUrl;
         });
     </script>
@@ -41,13 +42,14 @@
                     <?php foreach ($articles as $article): ?>
                         <tr>
                             <td class="pb-4">
-                                <img src="/img/<?= $article['gambar'] ?>" alt="Card Image" width="200px" height="115px" class="rounded-1">
+                                <img src="/img/<?= $article['gambar'] ?>" alt="Card Image" width="200px" height="115px"
+                                    class="rounded-1">
                             </td>
                             <td>
                                 <?= $article['judul'] ?>
                             </td>
                             <td class="text-end">
-                                <a href="<?= site_url('admin/editArticle/' . $article['id']) ?>"><button
+                                <a href="<?= site_url('/Admin/editArticle/' . $article['id']) ?>"><button
                                         class="btn btn-primary px-4" type="button">Edit</button></a>
                                 <button class="btn btn-danger mx-2 px-3" type="button"
                                     onclick="konfirmasiHapus(<?= $article['id'] ?>)">Hapus</button>
@@ -63,12 +65,9 @@
     </div>
 </div>
 
-<!-- Tambahkan ini pada bagian head halaman Anda -->
 <script src="https://cdn.ckeditor.com/4.16.2/standard/ckeditor.js"></script>
 
-<!-- Tambahkan ini sebelum tag penutup </body> -->
 <script>
-    // Inisialisasi CKEditor
     CKEDITOR.replace('konten');
 
     function konfirmasiHapus(id, id_kategori) {
@@ -82,7 +81,6 @@
             cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
-                // If the user confirms, make an AJAX request to delete the data
                 fetch("<?= site_url('Admin/deleteArticle/') ?>" + id)
                     .then(response => response.json())
                     .then(data => {
@@ -95,7 +93,7 @@
                                 confirmButtonText: 'OK'
                             }).then(() => {
                                 window.location = "<?= site_url('Admin/category/') ?>" + id_kategori;
-                                location.reload(); // Refresh the page
+                                location.reload(); // refresh
                             });
                         } else {
                             Swal.fire({
