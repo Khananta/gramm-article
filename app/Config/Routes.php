@@ -30,10 +30,21 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('Admin/dashboard', 'Admin::dashboard', ['filter' => 'login']);
-$routes->get('Admin/addArticle', 'Admin::addArticle', ['filter' => 'login']);
-$routes->get('/Admin/editArticle/(:num)', 'Admin::editArticle/$1', ['filter' => 'login']);
-$routes->get('Admin/category/(:num)', 'Admin::category/$1', ['filter' => 'login']);
+$routes->get('admin/editArticle/(:num)', 'Admin::editArticle/$1');
+$routes->get('/Admin/editArticle/(:num)', 'Admin::editArticle/$1');
+$routes->get('Admin/category/(:num)', 'Admin::category/$1');
+// $routes->post('/Admin/delete_admin/(:num)', 'Admin::delete_admin/$1');
+
+// LOGIN DAN LOGOUT
+$routes->get('/login-admin', 'Auth::index');
+$routes->get('register', 'Auth::register');
+$routes->post('register', 'Auth::processRegistration');
+$routes->get('logout', 'Auth::logout');
+
+$routes->get('admin/toggleAdminStatus/(:num)/(:alpha)', 'Admin::toggleAdminStatus/$1/$2');
+$routes->get('admin/toggleKategoriStatus/(:num)/(:alpha)', 'Admin::toggleKategoriStatus/$1/$2');
+
+
 
 
 /*

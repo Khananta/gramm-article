@@ -8,7 +8,7 @@ class Kategori_Model extends Model
 {
     protected $table = 'tb_kategori';
     protected $primaryKey = 'id_kategori';
-    protected $allowedFields = ['nama_kategori'];
+    protected $allowedFields = ['nama_kategori', 'status', 'last_updated'];
 
     // dapatin artikel berdasarkan kategori
     public function getArticlesByKategori($id_kategori = null, $search = '')
@@ -36,12 +36,27 @@ class Kategori_Model extends Model
             return $this->find($id); //kalau ada id yang ditentukan, maka akan mengambil berdasarkan id yang ditentukan
         }
     }
-    public function saveCategory($data)
-    {
-        return $this->insert($data);
-    }
     public function deleteCategory($id)
     {
         return $this->delete($id);
+    }
+    public function updateKategoriWithLastUpdated($id, $data)
+    {
+        $data['last_updated'] = date('Y-m-d H:i:s'); // Set last_updated to current timestamp
+        return $this->update($id, $data);
+    }
+    public function toggleStatus($kategoriId, $newStatus)
+    {
+        $this->where('id_kategori', $kategoriId)
+            ->set('status', $newStatus)
+            ->update();
+    }
+
+    public function getActiveArticlesByKategori($id_kategori)
+    {
+        $builder = $this->db->table('tb_artikel');
+        $builder->where('id_kategori', $id_kategori);
+        $builder->where('status', 'aktif'); // Hanya ambil artikel dengan status "aktif"
+        return $builder->get()->getResultArray();
     }
 }

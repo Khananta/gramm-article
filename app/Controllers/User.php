@@ -55,13 +55,13 @@ class User extends BaseController
         });
 
         $data = [
-            'current_page' => 'dashboard',
+            'current_page' => 'kategori',
             'page' => 'user/artkat',
             'articles' => $articles,
             'categories' => $categories,
             'kategori_nama' => !empty($kategori) ? reset($kategori)['nama_kategori'] : ''
         ];
 
-        return view('template_kategori', $data);
+        return view('template', $data);
     }
 }

@@ -13,3 +13,18 @@
     flex-direction: column;
 }
 
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.aktif {
+    background-color: green;
+}
+
+.nonaktif {
+    background-color: red;
+}

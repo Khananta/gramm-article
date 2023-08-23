@@ -38,7 +38,7 @@
                             href="/User/home">Beranda</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        <a class="nav-link dropdown-toggle <?= ($current_page === 'kategori') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             Kategori
                         </a>

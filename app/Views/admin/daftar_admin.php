@@ -1,4 +1,4 @@
-<h1 class="fw-bolder my-5 text-center">Kumpulan Kategori</h1>
+<h1 class="fw-bolder my-5 text-center">Manajemen Admin</h1>
 
 <div class="card">
     <div class="card-header col text-start">
@@ -6,7 +6,7 @@
             <!-- Button Tambah -->
             <div class="col-6">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    <span class="text"><i class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah Kategori</span>
+                    <span class="text"><i class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah Admin</span>
                 </button>
             </div>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -14,17 +14,37 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Kategori</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Admin</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form method="post" action="<?= site_url('Admin/addCategory') ?>">
-                                <div class="mb-3 mt-2">
-                                    <label class="form-label">Nama Kategori</label>
-                                    <input type="text" name="nama_kategori" class="form-control"
-                                        placeholder="Masukkan Judul Kategori.." required>
+                            <form action="<?= site_url('register') ?>" method="post">
+                                <div class="mb-3 mt-4">
+                                    <label class="form-label">Nama</label>
+                                    <input type="text" name="nama" class="form-control">
                                 </div>
                                 <div class="mb-3 mt-4">
+                                    <label class="form-label">Username</label>
+                                    <input type="text" name="username" class="form-control">
+                                </div>
+                                <div class="mb-3 mt-4">
+                                    <label for="exampleInputEmail1" class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control" id="exampleInputEmail1"
+                                        aria-describedby="emailHelp">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                                    <input type="password" name="password" class="form-control"
+                                        id="exampleInputPassword1">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Tipe</label>
+                                    <select name="tipe" class="form-control">
+                                        <option value="admin">Admin</option>
+                                        <option value="superuser">Superuser</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
                                     <label class="form-label">Status</label>
                                     <select name="status" class="form-control">
                                         <option value="aktif">Aktif</option>
@@ -42,7 +62,7 @@
             </div>
             <div class="col-6 text-end">
                 <button type="button" class="btn btn-danger" onclick="konfirmasiHapusMultiple()"><i
-                        class="fa-solid fa-trash" style="color: #ffffff;"></i> Hapus Kategori Terpilih</button>
+                        class="fa-solid fa-trash" style="color: #ffffff;"></i> Hapus Terpilih</button>
             </div>
         </div>
     </div>
@@ -50,7 +70,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form id="delete-form" action="<?= site_url('Admin/DeleteCategory') ?>" method="post">
+        <form id="delete-form" action="<?= site_url('Admin/hapus_multiple_admin') ?>" method="post">
             <table class="table">
                 <thead>
                     <tr>
@@ -58,41 +78,53 @@
                             <input type="checkbox" id="select-all">
                         </th>
                         <th>No.</th>
-                        <th>Nama Kategori</th>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Username</th>
                         <th>Terakhir Update</th>
+                        <th>Tipe</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php $counter = 1; ?>
-                    <?php foreach ($categories as $category): ?>
+                    <?php foreach ($admins as $admin): ?>
                         <tr>
                             <td>
-                                <input type="checkbox" name="category_to_delete[]" value="<?= $category['id_kategori'] ?>">
+                                <input type="checkbox" name="admins_to_delete[]" value="<?= $admin['id'] ?>">
                             </td>
                             <td>
                                 <?= $counter++; ?>
                             </td>
                             <td>
-                                <a href="<?= site_url('Admin/category/' . $category['id_kategori']) ?>"
-                                    style="text-decoration: none; color:black">
-                                    <?= $category['nama_kategori']; ?>
-                                </a>
+                                <?= $admin['nama']; ?>
                             </td>
-
                             <td>
-                                <?= $category['last_updated']; ?>
+                                <?= $admin['email']; ?>
+                            </td>
+                            <td>
+                                <?= $admin['username']; ?>
+                            </td>
+                            <td>
+                                <?= $admin['last_updated']; ?>
+                            </td>
+                            <td>
+                                <?= $admin['tipe']; ?>
                             </td>
                             <td>
                                 <span
-                                    class="status-indicator <?= $category['status'] === 'aktif' ? 'aktif' : 'nonaktif' ?> mx-3"></span>
+                                    class="status-indicator mx-3 <?= $admin['status'] === 'aktif' ? 'aktif' : 'nonaktif' ?>"></span>
                             </td>
                             <td>
                                 <a href="javascript:void(0)" class="btn btn-primary" onclick="openEditModal(
-                                    '<?= $category['id_kategori'] ?>',
-                                    '<?= $category['nama_kategori'] ?>',
-                                    '<?= $category['status'] ?>'
+                                    '<?= $admin['id'] ?>',
+                                    '<?= $admin['nama'] ?>',
+                                    '<?= $admin['username'] ?>',
+                                    '<?= $admin['email'] ?>',
+                                    '<?= $admin['password'] ?>',
+                                    '<?= $admin['tipe'] ?>',
+                                    '<?= $admin['status'] ?>'
                                 )">Edit</a>
                             </td>
                         </tr>
@@ -107,15 +139,39 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Data Kategori</h5>
+                <h5 class="modal-title" id="editModalLabel">Edit Data Admin</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="edit-form" action="<?= site_url('Admin/edit_kategori') ?>" method="post">
-                    <input type="hidden" name="kategori_id" id="edit-kategori-id">
+                <form id="edit-form" action="<?= site_url('Admin/edit_admin') ?>" method="post">
+                    <input type="hidden" name="admin_id" id="edit-admin-id">
                     <div class="mb-3">
                         <label for="edit-nama" class="form-label">Nama</label>
                         <input type="text" name="edit_nama" id="edit-nama" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-username" class="form-label">Username</label>
+                        <input type="text" name="edit_username" id="edit-username" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-email" class="form-label">Email</label>
+                        <input type="email" name="edit_email" id="edit-email" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" name="edit_password" id="edit-password" class="form-control">
+                            <button class="btn btn-primary" type="button" id="toggle-password">
+                                <i class="fa fa-eye-slash" aria-hidden="true" id="eye-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-tipe" class="form-label">Tipe</label>
+                        <select name="edit_tipe" id="edit-tipe" class="form-control">
+                            <option value="superuser">Superuser</option>
+                            <option value="admin">Admin</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="edit-status" class="form-label">Status</label>
@@ -135,8 +191,24 @@
 </div>
 
 <script>
+    // ICON MATA
+    document.addEventListener("DOMContentLoaded", function () {
+        const passwordInput = document.getElementById("edit-password");
+        const togglePasswordButton = document.getElementById("toggle-password");
+
+        togglePasswordButton.addEventListener("click", function () {
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                togglePasswordButton.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+            } else {
+                passwordInput.type = "password";
+                togglePasswordButton.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+            }
+        });
+    });
+
     const selectAllCheckbox = document.getElementById('select-all');
-    const checkboxes = document.querySelectorAll('input[name="category_to_delete[]"]');
+    const checkboxes = document.querySelectorAll('input[name="admins_to_delete[]"]');
 
     selectAllCheckbox.addEventListener('change', () => {
         checkboxes.forEach(checkbox => {
@@ -156,7 +228,7 @@
             });
         } else {
             Swal.fire({
-                title: 'Apakah Anda yakin ingin menghapus data kategori terpilih?',
+                title: 'Apakah Anda yakin ingin menghapus data admin terpilih?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -170,15 +242,23 @@
             });
         }
     }
-    function openEditModal(id_kategori, nama_kategori, status) {
+</script>
+
+<script>
+    function openEditModal(id, nama, username, email, password, tipe, status) {
         const editForm = document.getElementById('edit-form');
-        document.getElementById('edit-kategori-id').value = id_kategori;
-        document.getElementById('edit-nama').value = nama_kategori;
-        document.getElementById('edit-status').value = status;
+        document.getElementById('edit-admin-id').value = id;
+        document.getElementById('edit-nama').value = nama;
+        document.getElementById('edit-username').value = username;
+        document.getElementById('edit-email').value = email;
+        document.getElementById('edit-password').value = password;
+        document.getElementById('edit-tipe').value = tipe; // Set nilai dropdown tipe
+        document.getElementById('edit-status').value = status; // Set nilai dropdown status
 
         const editModal = new bootstrap.Modal(document.getElementById('editModal'));
         editModal.show();
     }
+
 
     function confirmSave() {
         Swal.fire({
@@ -193,9 +273,11 @@
             if (result.isConfirmed) {
                 const editForm = document.getElementById('edit-form');
                 const statusDropdown = document.getElementById('edit-status');
+                const tipeDropdown = document.getElementById('edit-tipe');
 
                 // Ambil nilai dropdown status dan tipe
                 const selectedStatus = statusDropdown.value;
+                const selectedTipe = tipeDropdown.value;
 
                 // Tambahkan input tersembunyi untuk mengirim nilai status dan tipe
                 const statusInput = document.createElement('input');
@@ -203,7 +285,13 @@
                 statusInput.name = 'edit_status';
                 statusInput.value = selectedStatus;
 
+                const tipeInput = document.createElement('input');
+                tipeInput.type = 'hidden';
+                tipeInput.name = 'edit_tipe';
+                tipeInput.value = selectedTipe;
+
                 editForm.appendChild(statusInput);
+                editForm.appendChild(tipeInput);
 
                 // Submit formulir
                 editForm.submit();
@@ -211,12 +299,12 @@
         });
     }
 
-    function toggleAdminStatus(kategoriId, newStatus) {
+    function toggleAdminStatus(adminId, newStatus) {
         const formData = new FormData();
-        formData.append('kategori_id', kategoriId);
+        formData.append('admin_id', adminId);
         formData.append('new_status', newStatus);
 
-        fetch('<?= site_url('admin/toggleKategoriStatus') ?>', {
+        fetch('<?= site_url('admin/toggleAdminStatus') ?>', {
             method: 'POST',
             body: formData
         })
@@ -225,8 +313,9 @@
                 if (data.success) {
                     location.reload();
                 } else {
-                    alert('Gagal mengubah status kategori.');
+                    alert('Gagal mengubah status admin.');
                 }
             });
     }
+
 </script>

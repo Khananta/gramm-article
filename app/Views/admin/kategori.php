@@ -1,6 +1,6 @@
 <div class="row align-items-center mb-3 mt-5">
     <div class="col">
-        <a href="/Admin/dashboard" style="text-decoration:none;" class="fs-5"><i class="fa-solid fa-arrow-left text-decoration:none;"></i> Kembali</a>
+        <a href="/Admin/dashboard" style="text-decoration:none;" class="fs-5"><i class="fa-solid mb-4 fa-arrow-left text-decoration:none;"></i> Kembali</a>
         <h1>List Artikel</h1>
         <?php if (isset($kategori_nama)): ?>
             <p>Kategori

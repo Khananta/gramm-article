@@ -31,8 +31,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #111111;">
         <div class="container">
             <a class="navbar-brand" href="/Admin/dashboard">
-                <span
-                    style="font-family: 'Inter'; font-weight: bold; color: red;">Gra</span><span
+                <span style="font-family: 'Inter'; font-weight: bold; color: red;">Gra</span><span
                     style="font-family: 'Inter'; font-weight: bold; color: white;">mm
                     <span style="font-family: 'Inter'; font-weight: bold; color: white;">- Admin</span>
                 </span>
@@ -48,6 +47,10 @@
                         <a class="nav-link <?= ($current_page === 'dashboard') ? 'active' : '' ?>"
                             href="/Admin/dashboard">Beranda</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= ($current_page === 'admin') ? 'active' : '' ?>"
+                            href="/Admin/admin_list">Admin</a>
+                    </li>
                 </ul>
                 <a href="/logout">
                     <button class="btn btn-primary px-4 col-sm-12 my-lg-0 mt-1 mb-2">Logout</button>
@@ -56,7 +59,20 @@
         </div>
     </nav>
     <!-- AKHIR NAVBAR -->
-
+    <div class="container-fluid g-0">
+        <?php if (!empty($admin)): ?>
+            <div class="alert alert-success" id="welcome-alert">
+                <p class="mb-0 text-center">Selamat datang,
+                    <?= $admin['nama'] ?>!
+                </p>
+            </div>
+            <script>
+                setTimeout(function () {
+                    document.getElementById('welcome-alert').style.display = 'none';
+                }, 5000); // 5000 milliseconds (5 detik)
+            </script>
+        <?php endif; ?>
+    </div>
     <div class="contain container">
         <div>
             <?php
@@ -76,7 +92,7 @@
                 </div>
             </div>
         </div>
-        </footer>
+    </footer>
 
     <!-- LINK JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -86,4 +102,5 @@
         integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous">
         </script>
 </body>
+
 </html>

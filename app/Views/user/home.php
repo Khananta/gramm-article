@@ -131,7 +131,7 @@ $is_searching = isset($_GET['search']) && !empty($_GET['search']);
         $query = "SELECT k.id_kategori, k.nama_kategori, a.id AS artikel_id, a.judul, a.konten, a.gambar, a.timestamp
         FROM (
             SELECT id, judul, konten, gambar, timestamp, id_kategori,
-            ROW_NUMBER() OVER (PARTITION BY id_kategori ORDER BY id) AS row_num 
+            ROW_NUMBER() OVER (PARTITION BY id_kategori ORDER BY timestamp DESC) AS row_num 
             FROM tb_artikel
             WHERE judul LIKE '%$search%'
         ) a 

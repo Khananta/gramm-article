@@ -2,19 +2,98 @@
 
 namespace App\Controllers;
 
+use App\Models\Dafmin_Model;
 use App\Models\Kategori_Model;
 use CodeIgniter\Controller;
 use App\Models\User_Model;
+use CodeIgniter\I18n\Time;
 
 class Admin extends Controller
 {
     public function dashboard()
     {
+        $session = session();
+
+        if (!$session->get('logged_in')) {
+            return redirect()->to('/login-admin');
+        }
+
+        $datmin = new Dafmin_Model();
+        $kategoriModel = new Kategori_Model();
+        $categories = $kategoriModel->findAll();
+        $userId = $session->get('user_id');
+        $admin = $datmin->find($userId);
+
         $data = [
             'current_page' => 'dashboard',
             'page' => 'admin/dashboard',
+            'categories' => $categories,
+            'admin' => $admin
         ];
+
         return view('template_admin', $data);
+    }
+
+    public function addCategory()
+    {
+        $model = new Kategori_Model();
+
+        $data = [
+            'nama_kategori' => $this->request->getPost('nama_kategori'),
+            'status' => $this->request->getPost('status'),
+            'last_updated' => Time::now()->toLocalizedString('yyyy-MM-dd HH:mm:ss'),
+        ];
+
+        $model->insert($data);
+
+        $response = [
+            'status' => 'success',
+            'message' => 'Selamat! Berhasil Menambah Kategori Artikel'
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+    public function DeleteCategory()
+    {
+        $categoriesToDelete = $this->request->getPost('category_to_delete');
+
+        if ($categoriesToDelete) {
+            $kategoriModel = new Kategori_Model();
+            foreach ($categoriesToDelete as $kategoriId) {
+                $kategoriModel->deleteCategory($kategoriId);
+            }
+
+            return redirect()->to('/Admin/dashboard')->with('success_message', 'Data admin terpilih berhasil dihapus.');
+        }
+
+        return redirect()->to('/Admin/dashboard')->with('error_message', 'Tidak ada data admin yang terpilih untuk dihapus.');
+    }
+    public function edit_kategori()
+    {
+        $kategoriId = $this->request->getPost('kategori_id');
+        $editData = [
+            'nama_kategori' => $this->request->getPost('edit_nama'),
+            'status' => $this->request->getPost('edit_status'),
+        ];
+
+        $kategoriModel = new Kategori_Model();
+        $kategoriModel->updateKategoriWithLastUpdated($kategoriId, $editData);
+
+        return redirect()->to('/Admin/dashboard')->with('success_message', 'Data admin berhasil diperbarui.');
+    }
+    public function toggleKategoriStatus($kategoriId, $newStatus)
+    {
+        $kategoriModel = new Kategori_Model();
+
+        // Pastikan $newStatus hanya bernilai 'active' atau 'inactive'
+        if ($newStatus === 'aktif' || $newStatus === 'nonaktif') {
+            $kategoriModel->where('id_kategori', $kategoriId)->set('status', $newStatus)->update();
+        } else {
+            return redirect()->back()->with('error', 'Nilai status tidak valid.');
+        }
+
+        return redirect()->to(site_url('Admin/dashboard'));
     }
     public function category($id_kategori)
     {
@@ -27,6 +106,10 @@ class Admin extends Controller
             return $kategori['id_kategori'] == $id_kategori;
         });
 
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/login-admin');
+        }
+
         $data = [
             'current_page' => 'category',
             'page' => 'admin/kategori',
@@ -37,10 +120,19 @@ class Admin extends Controller
 
         return view('template_admin', $data);
     }
+
     public function deleteArticle($id)
     {
         $model = new User_Model();
         $id_kategori = $model->getArticle($id)->getRow('id_kategori');
+
+        if (!session()->get('logged_in')) {
+            // Simpan URL tujuan dalam sesi
+            $destination = current_url(true)->getAbsoluteURL();
+            session()->set('destination', $destination);
+
+            return redirect()->to('/login-admin');
+        }
 
         if ($id_kategori !== null) {
             $model->deleteDataArticle($id);
@@ -60,12 +152,18 @@ class Admin extends Controller
     }
     public function addArticle()
     {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/login-admin');
+        }
+
         $data = [
             'current_page' => 'tambah_data',
             'page' => 'admin/tambah_data',
         ];
+
         return view('template_admin', $data);
     }
+
     public function saveArticle()
     {
         $model = new User_Model();
@@ -98,20 +196,22 @@ class Admin extends Controller
     }
     public function editArticle($id)
     {
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/login-admin');
+        }
+
         $model = new User_Model();
         $artikel = $model->getArticle($id)->getRow();
 
-        if ($artikel) {
-            $data = [
-                'current_page' => 'edit_data',
-                'page' => 'admin/edit_data',
-                'artikel' => $artikel,
-            ];
-            return view('template_admin', $data);
-        } else {
-            die('Data tidak ditemukan.');
-        }
+        $data = [
+            'current_page' => 'edit_data',
+            'page' => 'admin/edit_data',
+            'artikel' => $artikel,
+        ];
+
+        return view('template_admin', $data);
     }
+
     public function updateArticle()
     {
         $model = new User_Model();
@@ -157,41 +257,69 @@ class Admin extends Controller
             die('Pembaruan data tidak berhasil');
         }
     }
-
-    public function addCategory()
+    public function admin_list()
     {
-        $model = new Kategori_Model();
-        $nama_kat = $this->request->getPost('nama_kategori');
+        $session = session();
 
-        $data = [
-            'nama_kategori' => $nama_kat
-        ];
-
-        $model->saveCategory($data);
-        echo '<script>
-            alert("Selamat! Berhasil Menambah Kategori Artikel");
-            window.location="' . base_url('Admin/dashboard') . '"
-        </script>';
-    }
-    public function deleteCategory($id)
-    {
-        $model = new Kategori_Model();
-        $kategori = $model->getCategories($id);
-
-        if ($kategori !== null) {
-            $model->deleteCategory($id);
-            $response = [
-                'status' => 'success',
-                'message' => 'Selamat! Data berhasil terhapus.'
-            ];
-        } else {
-            $response = [
-                'status' => 'error',
-                'message' => 'Data gagal dihapus atau tidak ditemukan.'
-            ];
+        if (!$session->get('logged_in') || $session->get('tipe') !== 'superuser') {
+            return redirect()->to('/login-admin');
         }
 
-        header('Content-Type: application/json');
-        echo json_encode($response);
+        $adminModel = new Dafmin_Model();
+        $admins = $adminModel->findAll();
+
+        $data = [
+            'current_page' => 'admin',
+            'page' => 'admin/daftar_admin',
+            'admins' => $admins,
+        ];
+
+        return view('template_admin', $data);
+    }
+    public function hapus_multiple_admin()
+    {
+        $adminsToDelete = $this->request->getPost('admins_to_delete');
+
+        if ($adminsToDelete) {
+            $adminModel = new Dafmin_Model();
+            foreach ($adminsToDelete as $adminId) {
+                $adminModel->deleteAdmin($adminId);
+            }
+
+            return redirect()->to('/Admin/admin_list')->with('success_message', 'Data admin terpilih berhasil dihapus.');
+        }
+
+        return redirect()->to('/Admin/admin_list')->with('error_message', 'Tidak ada data admin yang terpilih untuk dihapus.');
+    }
+    public function edit_admin()
+    {
+        $adminId = $this->request->getPost('admin_id');
+        $editData = [
+            'nama' => $this->request->getPost('edit_nama'),
+            'username' => $this->request->getPost('edit_username'),
+            'email' => $this->request->getPost('edit_email'),
+            'password' => $this->request->getPost('edit_password'),
+            'status' => $this->request->getPost('edit_status'),
+            'tipe' => $this->request->getPost('edit_tipe'),
+        ];
+
+        $adminModel = new Dafmin_Model();
+        $adminModel->updateAdminWithLastUpdated($adminId, $editData);
+
+        return redirect()->to('/Admin/admin_list')->with('success_message', 'Data admin berhasil diperbarui.');
+    }
+
+    public function toggleAdminStatus($adminId, $newStatus)
+    {
+        $adminModel = new Dafmin_Model();
+
+        // Pastikan $newStatus hanya bernilai 'active' atau 'inactive'
+        if ($newStatus === 'aktif' || $newStatus === 'nonaktif') {
+            $adminModel->where('id', $adminId)->set('status', $newStatus)->update();
+        } else {
+            return redirect()->back()->with('error', 'Nilai status tidak valid.');
+        }
+
+        return redirect()->to(site_url('Admin/admin_list'));
     }
 }

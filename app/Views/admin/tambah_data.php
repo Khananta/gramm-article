@@ -7,7 +7,7 @@
             <div class="input-group">
                 <input type="text" name="judul" class="form-control" placeholder="Judul Artikel" required>
             </div>
-            <div class="input-group mt-2 col-6">
+            <div class="input-group mt-2">
                 <textarea name="konten" class="form-control" placeholder="Konten Artikel" id="konten"
                     required></textarea>
             </div>
@@ -56,3 +56,9 @@
         document.querySelector('form').submit();
     }
 </script>
+
+<style>
+    .cke {
+        width: 100% !important;
+    }
+</style>
