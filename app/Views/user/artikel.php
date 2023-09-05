@@ -10,6 +10,7 @@
                         </li>
                     </ol>
                 </nav>
+                
                 <h1 class="fw-bold">
                     <?php echo $artikel["judul"]; ?>
                 </h1>
