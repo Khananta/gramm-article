@@ -21,41 +21,73 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+    <link rel="shortcut icon" href="/img/LogoNew.png">
 
-
-    <title>Login Admin</title>
+    <title>Gramm | Login</title>
 </head>
-<!-- 
-<div class="container">
-    <div class="row">
-        <div class="col-1 offset-5">
-        <img src="/img/Gramm_Logo.png" alt="Logo" class="img-fluid mx-5 mt-4">
-        </div>
-    </div>
-</div> -->
 
 <body class="bg-dark">
-    <div class="mt-5 offset-4">
+<div class="mt-5 offset-xl-4 offset-lg-4 offset-md-4 offset-sm-4">
         <div class="container mt-5 pt-5">
             <div class="row">
-                <div class="col-6 bg-secondary bg-opacity-25 p-5 rounded-3">
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-8 bg-secondary bg-opacity-25 p-5 rounded-3">
                     <h2 class="fw-bold text-light">Login</h2>
+
+                    <?php if (session()->getFlashdata('alert')) : ?>
+                        <div class="alert alert-danger">
+                            <?= session()->getFlashdata('alert') ?>
+                        </div>
+                    <?php endif; ?>
 
                     <form method="post" action="<?= site_url('/Auth/login') ?>">
                         <div class="mt-4">
-                            <label class="form-label text-light">Username</label>
-                            <input type="text" name="username" placeholder="Masukan username kamu" class="form-control" required>
+                            <label class="form-label text-light">Username or Email</label>
+                            <input type="text" name="username_or_email" placeholder="Enter username or email"
+                                class="form-control">
                         </div>
                         <div class="mt-4">
                             <label for="exampleInputPassword1" class="form-label text-light">Password</label>
-                            <input type="password" name="password" placeholder="Masukan password kamu" class="form-control" id="exampleInputPassword1" required>
+                            <input type="password" name="password" placeholder="Enter password" class="form-control"
+                                id="exampleInputPassword1">
                         </div>
-                        <button type="submit" class="btn btn-danger rounded-2 px-5 mt-5 col-12">Login</button>
+                        <div class="mt-3 text-end">
+                            <a href="#" class="text-decoration-none text-light" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Lupa password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-danger rounded-2 px-5 mt-4 col-12 py-3">Login</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Modal Lupa Password -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Lupa Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="forgotPasswordForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Masukan email anda" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-primary" id="sendPasswordResetEmail">Kirim Sandi ke Email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+                         
 
     <!-- LINK JS -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"

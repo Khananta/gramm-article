@@ -18,38 +18,40 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Sweet Alert -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+    <link rel="shortcut icon" href="img/LogoNew.png">
 
-
-    <title>Gramm</title>
+    <title>Gramm | Admin</title>
 </head>
 
 <body>
     <!-- NAVBAR -->
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #111111;">
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #111111;">
         <div class="container">
-            <a class="navbar-brand" href="/Admin/dashboard">
-                <span style="font-family: 'Inter'; font-weight: bold; color: red;">Gra</span><span
+
+            <a class="navbar-brand" href="/dashboard">
+                <!-- <span style="font-family: 'Inter'; font-weight: bold; color: red;">Gra</span><span
                     style="font-family: 'Inter'; font-weight: bold; color: white;">mm
                     <span style="font-family: 'Inter'; font-weight: bold; color: white;">- Admin</span>
-                </span>
+                </span> -->
+                <img src="/Img/LogoNew.png" alt="Gramm Logo" width="40px">
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+
+            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto nav">
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page === 'dashboard') ? 'active' : '' ?>"
-                            href="/Admin/dashboard">Beranda</a>
+                            href="/dashboard">Beranda</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link <?= ($current_page === 'admin') ? 'active' : '' ?>"
-                            href="/Admin/admin_list">Admin</a>
+                            href="/adminlist">Admin</a>
                     </li>
                 </ul>
                 <a href="/logout">
@@ -58,21 +60,14 @@
             </div>
         </div>
     </nav>
-    <!-- AKHIR NAVBAR -->
-    <div class="container-fluid g-0">
-        <?php if (!empty($admin)): ?>
-            <div class="alert alert-success" id="welcome-alert">
-                <p class="mb-0 text-center">Selamat datang,
-                    <?= $admin['nama'] ?>!
-                </p>
-            </div>
-            <script>
-                setTimeout(function () {
-                    document.getElementById('welcome-alert').style.display = 'none';
-                }, 5000); // 5000 milliseconds (5 detik)
-            </script>
-        <?php endif; ?>
-    </div>
+
+    <!-- Bagian tampilan pesan selamat datang -->
+    <?php if (session()->has('pesan_selamat_datang')): ?>
+        <div class="alert alert-success text-center">
+            <?= session('pesan_selamat_datang') ?>
+        </div>
+    <?php endif; ?>
+
     <div class="contain container">
         <div>
             <?php

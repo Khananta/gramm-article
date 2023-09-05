@@ -1,7 +1,7 @@
 <div class="row mt-4">
     <div class="col-lg-12 mb-4">
         <h3 class="display-6 mb-2">Edit Artikel</h3>
-        <form method="POST" action="<?= site_url('admin/updateArticle') ?>" enctype="multipart/form-data"
+        <form method="POST" action="<?= site_url('/updatearticle') ?>" enctype="multipart/form-data"
             onsubmit="return validateForm()">
             <input type="hidden" name="id" value="<?= $artikel->id ?>">
             <div class="form-group my-2">
@@ -24,8 +24,25 @@
                     <input type="file" class="form-control" id="gambar" name="gambar">
                 <?php endif; ?>
             </div>
+            <div class="mt-4">
+                <label for="status">Status Artikel:</label>
+                <select name="status" id="status">
+                    <option value="aktif" <?= $artikel->status == 'aktif' ? 'selected' : '' ?>>Aktif</option>
+                    <option value="nonaktif" <?= $artikel->status == 'nonaktif' ? 'selected' : '' ?>>Nonaktif</option>
+                </select>
+            </div>
+            <div class="mt-4">
+                <label for="pembuat">Pilih Pembuat:</label>
+                <select name="pembuat" id="pembuat">
+                    <?php foreach ($pembuatList as $pembuat): ?>
+                        <option value="<?= $pembuat['nama'] ?>" <?= $artikel->pembuat == $pembuat['nama'] ? 'selected' : '' ?>>
+                            <?= $pembuat['nama'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div class="mt-3 text-end">
-                <a href="<?= site_url('Admin/category/' . $artikel->id_kategori) ?>" class="btn btn-danger">Batal</a>
+                <a href="<?= site_url('/article/' . $artikel->id_kategori) ?>" class="btn btn-danger">Batal</a>
                 <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
@@ -58,7 +75,6 @@
             alert("Maaf, konten artikel tidak boleh kosong");
             return false;
         }
-
         return true;
     }
 </script>

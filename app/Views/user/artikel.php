@@ -15,7 +15,7 @@
                 </h1>
                 <p class="text-muted">
                     <i class="fas fa-calendar-alt"></i>
-                    <?php echo date('d M Y H:i', strtotime($artikel["timestamp"])); ?>
+                    <?php echo date('d M Y H:i', strtotime($artikel["timestamp"])); ?> / <i class="fa-solid fa-user"></i> <?php echo $artikel["pembuat"]; ?>
                 </p>
             </div>
         </div>
@@ -47,7 +47,7 @@
 
                     $currentArticleId = $artikel['id'];
 
-                    $query = "SELECT * FROM tb_artikel WHERE id <> $currentArticleId LIMIT 4";
+                    $query = "SELECT * FROM tb_artikel WHERE status = 'aktif' AND id <> $currentArticleId LIMIT 4";
 
                     $result = mysqli_query($conn, $query);
 
@@ -123,7 +123,7 @@
 
             $currentArticleId = $artikel['id'];
 
-            $query = "SELECT * FROM tb_artikel WHERE id <> $currentArticleId LIMIT 4";
+            $query = "SELECT * FROM tb_artikel WHERE status = 'aktif' AND id <> $currentArticleId LIMIT 4";
 
             $result = mysqli_query($conn, $query);
 

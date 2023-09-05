@@ -1,7 +1,7 @@
 <div class="container">
     <div class="row mt-4">
         <h4 class="display-6 mb-3 fw-semibold">Tambah Artikel</h4>
-        <form method="post" action="<?= site_url('Admin/saveArticle') ?>" class="col-lg-12 mb-4"
+        <form method="post" action="<?= site_url('/savearticle') ?>" class="col-lg-12 mb-4"
             enctype="multipart/form-data">
             <input type="hidden" name="id_kategori" value="<?= $_GET['id_kategori'] ?>">
             <div class="input-group">
@@ -14,8 +14,23 @@
             <div class="input-group mt-4">
                 <input type="file" name="gambar" class="form-control" id="gambar" accept=".png, .jpg, .jpeg" required>
             </div>
+            <div class="mt-4">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-control">
+                    <option value="aktif">Aktif</option>
+                    <option value="nonaktif">Nonaktif</option>
+                </select>
+            </div>
+            <div class="mt-4">
+                <label for="adminDropdown">Pilih Admin:</label>
+                <select name="pembuat" id="pembuat">
+                    <?php foreach ($pembuatList as $pembuat): ?>
+                        <option value="<?= $pembuat['nama'] ?>"><?= $pembuat['nama'] ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <div class="mt-4 text-end">
-                <a href="<?= site_url('Admin/category/' . $_GET['id_kategori']) ?>" class="btn btn-danger"
+                <a href="<?= site_url('/article/' . $_GET['id_kategori']) ?>" class="btn btn-danger"
                     style="text-decoration: none;">Batal</a>
                 <button type="button" class="btn btn-primary" onclick="validateForm()">Simpan</button>
             </div>
@@ -34,7 +49,7 @@
         var gambarInput = document.getElementById('gambar');
         var allowedExtensions = /(\.png|\.jpg|\.jpeg)$/i;
 
-        if (editorData === '') {
+        if (!editorData.replace(/<[^>]*>|&nbsp;|\s/g, '').trim()) {
             alert('Konten Artikel tidak boleh kosong.');
             return;
         }
@@ -56,9 +71,3 @@
         document.querySelector('form').submit();
     }
 </script>
-
-<style>
-    .cke {
-        width: 100% !important;
-    }
-</style>

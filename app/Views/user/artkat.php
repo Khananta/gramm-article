@@ -15,10 +15,9 @@
                 $search = isset($_GET['search']) ? $_GET['search'] : '';
                 
                 if (!empty($search)) {
-                    $query = "SELECT * FROM tb_artikel WHERE judul LIKE '%$search%'";
+                    $query = "SELECT * FROM tb_artikel WHERE judul LIKE '%$search%' AND status = 'aktif'";
                     $result = mysqli_query($conn, $query);
 
-                    // mengambil hasil pencarian dan menyimpannya dalam array $articles
                     $articles = [];
                     while ($row = mysqli_fetch_assoc($result)) {
                         $articles[] = $row;
@@ -27,7 +26,7 @@
                 ?>
 
                 <input type="text" name="search" class="form-control" placeholder="Temukan berbagai artikel menarik.."
-                    value="<?php echo $search; ?>">
+                    value="<?= $search; ?>">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
             </div>
         </form>
@@ -42,11 +41,12 @@
         </form>
     </div>
     <div class="col-8 offset-2">
-            <?php if (!empty($articles)): ?>
-                <div class="row mt-0">
-                    <?php foreach ($articles as $article): ?>
+    <?php if (!empty($articles)): ?>
+            <div class="row mt-0">
+                <?php foreach ($articles as $article): ?>
+                    <?php if ($article['status'] === 'aktif'): ?>
                         <div class="col-lg-4 g-3">
-                            <a href="<?php echo base_url('/User/artikel/' . $article['id']); ?>"
+                            <a href="<?= base_url('/User/artikel/' . $article['id']); ?>"
                                 style="text-decoration:none; color:black;">
                                 <div class="card">
                                     <img src="/img/<?= $article['gambar'] ?>" class="card-img-top img-fluid" alt="Card Image">
@@ -56,29 +56,27 @@
                                         </h5>
                                         <p class="card-text">
                                             <?php
-                                            // batasi max length konten menjadi 50 karakter
-                                            $timestamp = date('d M Y', strtotime($article['timestamp']));
-                                            $timestamps = date('H:i', strtotime($article['timestamp']));
+                                            $timestamp = date('d M Y H:i', strtotime($article['timestamp']));
                                             $max_length = 50;
                                             $konten = $article['konten'];
                                             if (strlen($konten) > $max_length) {
                                                 $konten = substr($konten, 0, $max_length) . '...';
                                             }
                                             echo $konten;
-    
                                             ?>
                                         </p>
                                     </div>
                                     <div class="card-footer">
                                         <small class="text-muted">
                                             <i class="fa-solid fa-calendar-days text-muted"></i>
-                                            <?= $timestamp ?> <?= $timestamps ?>
+                                            <?= $timestamp ?>
                                         </small>
                                     </div>
                                 </div>
                             </a>
                         </div>
-                    <?php endforeach; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?> 
                 </div>
             <?php else: ?>
                 <div class="row mt-4">

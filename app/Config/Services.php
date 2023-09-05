@@ -28,5 +28,15 @@ class Services extends BaseService
      *
      *     return new \CodeIgniter\Example();
      * }
+     * 
      */
+    public static function pager(bool $getShared = true)
+    {
+        if ($getShared) {
+            return static::getSharedInstance('pager');
+        }
+
+        return new \CodeIgniter\Pager\Pager();
+    }
+
 }

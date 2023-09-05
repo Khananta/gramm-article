@@ -42,21 +42,7 @@ class Kategori_Model extends Model
     }
     public function updateKategoriWithLastUpdated($id, $data)
     {
-        $data['last_updated'] = date('Y-m-d H:i:s'); // Set last_updated to current timestamp
+        $data['last_updated'] = date('Y-m-d H:i:s');
         return $this->update($id, $data);
-    }
-    public function toggleStatus($kategoriId, $newStatus)
-    {
-        $this->where('id_kategori', $kategoriId)
-            ->set('status', $newStatus)
-            ->update();
-    }
-
-    public function getActiveArticlesByKategori($id_kategori)
-    {
-        $builder = $this->db->table('tb_artikel');
-        $builder->where('id_kategori', $id_kategori);
-        $builder->where('status', 'aktif'); // Hanya ambil artikel dengan status "aktif"
-        return $builder->get()->getResultArray();
     }
 }

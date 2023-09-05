@@ -17,7 +17,8 @@
     <!-- Menambahkan link ke CSS FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-</head>
+    <link rel="shortcut icon" href="/img/LogoNew.png">
+
     <title>Gramm</title>
 </head>
 
@@ -38,14 +39,14 @@
                             href="/User/home">Beranda</a>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?= ($current_page === 'kategori') ? 'active' : '' ?>" href="#" role="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                        <a class="nav-link dropdown-toggle <?= ($current_page === 'kategori') ? 'active' : '' ?>"
+                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Kategori
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <?php
                             $db = db_connect();
-                            $query = "SELECT * FROM tb_kategori";
+                            $query = "SELECT * FROM tb_kategori WHERE status = 'aktif'"; // Menambahkan WHERE untuk filter status
                             $result = $db->query($query);
 
                             if (!$result) {
@@ -60,11 +61,12 @@
                                 }
                             } else {
                                 $empty = "Tidak ada data yang ditemukan.";
-                                echo '<p class="mt-5 mb-5 pb-5 text-center fs-6 pt-5">' . $empty . '</p>';
+                                echo '<p class="my-5 py-5 mx-5 text-center fs-6">' . $empty . '</p>';
                             }
                             ?>
                         </div>
                     </li>
+
                 </ul>
             </div>
         </div>

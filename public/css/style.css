@@ -28,3 +28,31 @@
 .nonaktif {
     background-color: red;
 }
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.pagination .page-item {
+    list-style: none;
+    margin: 0 0.5rem;
+}
+
+.pagination .page-link {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #333;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #0D6EFD;
+    color: white;
+    border: 1px solid #0D6EFD;
+}
+
+.cke {
+    width: 100% !important;
+}

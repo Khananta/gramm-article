@@ -1,5 +1,4 @@
 <h1 class="fw-bolder my-5 text-center">Kumpulan Kategori</h1>
-
 <div class="card">
     <div class="card-header col text-start">
         <div class="row">
@@ -18,11 +17,12 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form method="post" action="<?= site_url('Admin/addCategory') ?>">
+                            <form method="post" action="<?= site_url('/addcategory') ?>">
                                 <div class="mb-3 mt-2">
                                     <label class="form-label">Nama Kategori</label>
                                     <input type="text" name="nama_kategori" class="form-control"
-                                        placeholder="Masukkan Judul Kategori.." required>
+                                        placeholder="Masukkan Judul Kategori.." pattern="^\S(.*\S)?$"
+                                        title="Tidak boleh mengisi spasi atau mengosongkan field" required>
                                 </div>
                                 <div class="mb-3 mt-4">
                                     <label class="form-label">Status</label>
@@ -50,7 +50,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form id="delete-form" action="<?= site_url('Admin/DeleteCategory') ?>" method="post">
+        <form id="delete-form" action="<?= site_url('/deletecategory') ?>" method="post">
             <table class="table">
                 <thead>
                     <tr>
@@ -65,7 +65,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $counter = 1; ?>
+                    <?php $counter = ($currentPage - 1) * $itemsPerPage + 1; ?>
                     <?php foreach ($categories as $category): ?>
                         <tr>
                             <td>
@@ -75,7 +75,7 @@
                                 <?= $counter++; ?>
                             </td>
                             <td>
-                                <a href="<?= site_url('Admin/category/' . $category['id_kategori']) ?>"
+                                <a href="<?= site_url('/article/' . $category['id_kategori']) ?>"
                                     style="text-decoration: none; color:black">
                                     <?= $category['nama_kategori']; ?>
                                 </a>
@@ -103,7 +103,18 @@
     </div>
 </div>
 
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+<div class="pagination">
+    <ul class="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <li
+                class="page-item <?= $i === (isset($_GET['halaman-ke']) ? (int) $_GET['halaman-ke'] : 1) ? 'active' : '' ?>">
+                <a class="page-link" href="<?= site_url('/dashboard?halaman-ke=' . $i) ?>"><?= $i ?></a>
+            </li>
+        <?php endfor; ?>
+    </ul>
+</div>
+
+<div class=" modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -111,11 +122,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="edit-form" action="<?= site_url('Admin/edit_kategori') ?>" method="post">
+                <form id="edit-form" action="<?= site_url('/editcategory') ?>" method="post"
+                    onsubmit="return validateForm()">
                     <input type="hidden" name="kategori_id" id="edit-kategori-id">
                     <div class="mb-3">
                         <label for="edit-nama" class="form-label">Nama</label>
-                        <input type="text" name="edit_nama" id="edit-nama" class="form-control">
+                        <input type="text" name="edit_nama" id="edit-nama" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label for="edit-status" class="form-label">Status</label>
@@ -133,6 +145,20 @@
         </div>
     </div>
 </div>
+
+<?php
+$response = session()->getFlashdata('response');
+if ($response && $response['status'] === 'success'):
+    ?>
+    <script>
+        Swal.fire({
+            title: "Sukses!",
+            text: "<?= $response['message']; ?>",
+            icon: "success",
+            button: "OK",
+        });
+    </script>
+<?php endif; ?>
 
 <script>
     const selectAllCheckbox = document.getElementById('select-all');
@@ -165,11 +191,41 @@
                 cancelButtonText: 'Tidak'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    document.getElementById('delete-form').submit();
+                    const deleteForm = document.getElementById('delete-form');
+                    const formData = new FormData(deleteForm);
+
+                    fetch(deleteForm.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                Swal.fire({
+                                    title: 'Sukses!',
+                                    text: data.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: data.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
                 }
             });
         }
     }
+
     function openEditModal(id_kategori, nama_kategori, status) {
         const editForm = document.getElementById('edit-form');
         document.getElementById('edit-kategori-id').value = id_kategori;
@@ -181,6 +237,29 @@
     }
 
     function confirmSave() {
+        const judulValue = document.getElementById("edit-nama").value.trim();
+        const editForm = document.getElementById('edit-form');
+        const statusDropdown = document.getElementById('edit-status');
+
+        const selectedStatus = statusDropdown.value;
+
+        const statusInput = document.createElement('input');
+        statusInput.type = 'hidden';
+        statusInput.name = 'edit_status';
+        statusInput.value = selectedStatus;
+
+        editForm.appendChild(statusInput);
+
+        if (!judulValue.replace(/<[^>]*>|&nbsp;|\s/g, '').trim()) {
+            Swal.fire({
+                title: 'Data tidak boleh kosong!',
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            });
+            return false;
+        }
+
         Swal.fire({
             title: 'Apakah Anda yakin ingin menyimpan perubahan?',
             icon: 'question',
@@ -191,42 +270,16 @@
             cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
-                const editForm = document.getElementById('edit-form');
-                const statusDropdown = document.getElementById('edit-status');
-
-                // Ambil nilai dropdown status dan tipe
-                const selectedStatus = statusDropdown.value;
-
-                // Tambahkan input tersembunyi untuk mengirim nilai status dan tipe
-                const statusInput = document.createElement('input');
-                statusInput.type = 'hidden';
-                statusInput.name = 'edit_status';
-                statusInput.value = selectedStatus;
-
-                editForm.appendChild(statusInput);
-
-                // Submit formulir
-                editForm.submit();
+                Swal.fire({
+                    title: 'Konfirmasi perubahan data',
+                    text: 'Data akan disimpan.',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Ok',
+                }).then(() => {
+                    editForm.submit();
+                });
             }
         });
-    }
-
-    function toggleAdminStatus(kategoriId, newStatus) {
-        const formData = new FormData();
-        formData.append('kategori_id', kategoriId);
-        formData.append('new_status', newStatus);
-
-        fetch('<?= site_url('admin/toggleKategoriStatus') ?>', {
-            method: 'POST',
-            body: formData
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('Gagal mengubah status kategori.');
-                }
-            });
     }
 </script>

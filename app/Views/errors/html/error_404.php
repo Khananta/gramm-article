@@ -67,6 +67,7 @@
             color: #dd4814;
         }
     </style>
+    <link rel="shortcut icon" href="/img/logo.png">
 </head>
 <body>
     <div class="wrap">

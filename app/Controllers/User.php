@@ -22,15 +22,20 @@ class User extends BaseController
         $article = $artikelModel->find($id);
 
         if ($article) {
-            $data = [
-                'page' => 'user/artikel',
-                'artikel' => $article
-            ];
-            return view('template', $data);
+            if ($article['status'] === 'aktif') {
+                $data = [
+                    'page' => 'user/artikel',
+                    'artikel' => $article
+                ];
+                return view('template', $data);
+            } else {
+                return view('errors/html/error');
+            }
         } else {
-            return view('errors/html/error_404');
+            return view('errors/html/error');
         }
     }
+
     public function artkat($id_kategori)
     {
         $kategoriModel = new Kategori_Model();

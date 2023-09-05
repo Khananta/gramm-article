@@ -28,21 +28,30 @@ $routes->setAutoRoute(true);
  * --------------------------------------------------------------------
  */
 
-// We get a performance increase by specifying the default
-// route since we don't have to scan directories.
-$routes->get('admin/editArticle/(:num)', 'Admin::editArticle/$1');
-$routes->get('/Admin/editArticle/(:num)', 'Admin::editArticle/$1');
-$routes->get('Admin/category/(:num)', 'Admin::category/$1');
-// $routes->post('/Admin/delete_admin/(:num)', 'Admin::delete_admin/$1');
+// DASHBOARD ADMIN
+$routes->get('/dashboard', 'Dashboard::dashboard');
+$routes->post('/addcategory', 'Dashboard::addcategory');
+$routes->post('/editcategory', 'Dashboard::editcategory');
+$routes->post('/deletecategory', 'Dashboard::deletecategory');
+
+// KUMPULAN ARTIKEL ADMIN
+$routes->get('/article/(:num)', 'Article::article/$1');
+$routes->get('/addarticle', 'Article::addarticle');
+$routes->post('/deletearticle', 'Article::deletearticle');
+$routes->post('/savearticle', 'Article::savearticle');
+$routes->get('/editarticle/(:num)', 'Article::editarticle/$1');
+$routes->post('/updatearticle', 'Article::updatearticle');
+
+// DAFTAR ADMIN
+$routes->get('/adminlist', 'Admin::admin_list');
 
 // LOGIN DAN LOGOUT
 $routes->get('/login-admin', 'Auth::index');
-$routes->get('register', 'Auth::register');
 $routes->post('register', 'Auth::processRegistration');
 $routes->get('logout', 'Auth::logout');
 
-$routes->get('admin/toggleAdminStatus/(:num)/(:alpha)', 'Admin::toggleAdminStatus/$1/$2');
-$routes->get('admin/toggleKategoriStatus/(:num)/(:alpha)', 'Admin::toggleKategoriStatus/$1/$2');
+// $routes->get('admin/toggleAdminStatus/(:num)/(:alpha)', 'Admin::toggleAdminStatus/$1/$2');
+// $routes->get('admin/toggleKategoriStatus/(:num)/(:alpha)', 'Admin::toggleKategoriStatus/$1/$2');
 
 
 
