@@ -9,78 +9,78 @@ use CodeIgniter\I18n\Time;
 class Auth extends Controller
 {
     public function processRegistration()
-{
-    // Dapatkan data yang akan ditambahkan
-    $nama = $this->request->getPost('nama');
-    $username = $this->request->getPost('username');
-    $email = $this->request->getPost('email');
+    {
+        // Dapatkan data yang akan ditambahkan
+        $nama = $this->request->getPost('nama');
+        $username = $this->request->getPost('username');
+        $email = $this->request->getPost('email');
 
-    // Memeriksa apakah alamat email sesuai dengan format yang diinginkan
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !strpos($email, "@gmail.com")) {
-        // Jika tidak sesuai, tampilkan pesan kesalahan
+        // Memeriksa apakah alamat email sesuai dengan format yang diinginkan
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || !strpos($email, "@gmail.com")) {
+            // Jika tidak sesuai, tampilkan pesan kesalahan
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal ditambahkan. Email harus memiliki format yang sesuai, contoh: example@gmail.com',
+            ];
+            return redirect()->to('/adminlist')->with('response', $response);
+        }
+
+        // Periksa apakah nama sudah ada dalam database
+        $adminModel = new Dafmin_Model();
+        $existingAdminNama = $adminModel->where('nama', $nama)->first();
+
+        if ($existingAdminNama) {
+            // Nama sudah ada dalam database, tampilkan pesan kesalahan
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal ditambahkan. Nama sudah tersedia',
+            ];
+            return redirect()->to('/adminlist')->with('response', $response);
+        }
+
+        // Periksa apakah username sudah ada dalam database
+        $existingAdminUsername = $adminModel->where('username', $username)->first();
+
+        if ($existingAdminUsername) {
+            // Username sudah ada dalam database, tampilkan pesan kesalahan
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal ditambahkan. Username sudah tersedia',
+            ];
+            return redirect()->to('/adminlist')->with('response', $response);
+        }
+
+        // Periksa apakah email sudah ada dalam database
+        $existingAdminEmail = $adminModel->where('email', $email)->first();
+
+        if ($existingAdminEmail) {
+            // Email sudah ada dalam database, tampilkan pesan kesalahan
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal ditambahkan. Email sudah tersedia',
+            ];
+            return redirect()->to('/adminlist')->with('response', $response);
+        }
+
+        // Jika tidak ada data yang sama, simpan data admin baru
+        $data = [
+            'nama' => $nama,
+            'email' => $email,
+            'username' => $username,
+            'password' => $this->request->getPost('password'),
+            'tipe' => $this->request->getPost('tipe'),
+            'status' => $this->request->getPost('status'),
+            'last_updated' => Time::now()->toLocalizedString('yyyy-MM-dd HH:mm:ss'),
+        ];
+
+        $adminModel->insert($data);
+
         $response = [
-            'status' => 'error',
-            'message' => 'Data gagal ditambahkan. Email harus memiliki format yang sesuai, contoh: example@gmail.com',
+            'status' => 'success',
+            'message' => 'Data admin berhasil ditambahkan!',
         ];
         return redirect()->to('/adminlist')->with('response', $response);
     }
-
-    // Periksa apakah nama sudah ada dalam database
-    $adminModel = new Dafmin_Model();
-    $existingAdminNama = $adminModel->where('nama', $nama)->first();
-
-    if ($existingAdminNama) {
-        // Nama sudah ada dalam database, tampilkan pesan kesalahan
-        $response = [
-            'status' => 'error',
-            'message' => 'Data gagal ditambahkan. Nama sudah tersedia',
-        ];
-        return redirect()->to('/adminlist')->with('response', $response);
-    }
-
-    // Periksa apakah username sudah ada dalam database
-    $existingAdminUsername = $adminModel->where('username', $username)->first();
-
-    if ($existingAdminUsername) {
-        // Username sudah ada dalam database, tampilkan pesan kesalahan
-        $response = [
-            'status' => 'error',
-            'message' => 'Data gagal ditambahkan. Username sudah tersedia',
-        ];
-        return redirect()->to('/adminlist')->with('response', $response);
-    }
-
-    // Periksa apakah email sudah ada dalam database
-    $existingAdminEmail = $adminModel->where('email', $email)->first();
-
-    if ($existingAdminEmail) {
-        // Email sudah ada dalam database, tampilkan pesan kesalahan
-        $response = [
-            'status' => 'error',
-            'message' => 'Data gagal ditambahkan. Email sudah tersedia',
-        ];
-        return redirect()->to('/adminlist')->with('response', $response);
-    }
-
-    // Jika tidak ada data yang sama, simpan data admin baru
-    $data = [
-        'nama' => $nama,
-        'email' => $email,
-        'username' => $username,
-        'password' => $this->request->getPost('password'),
-        'tipe' => $this->request->getPost('tipe'),
-        'status' => $this->request->getPost('status'),
-        'last_updated' => Time::now()->toLocalizedString('yyyy-MM-dd HH:mm:ss'),
-    ];
-
-    $adminModel->insert($data);
-
-    $response = [
-        'status' => 'success',
-        'message' => 'Data admin berhasil ditambahkan!',
-    ];
-    return redirect()->to('/adminlist')->with('response', $response);
-}
 
 
 
@@ -113,6 +113,8 @@ class Auth extends Controller
                 $session->set('tipe', $user['tipe']);
                 $session->set('status', $user['status']);
                 $session->set('nama_admin', $user['nama']);
+                $session->set('email_admin', $user['email']);
+                $session->set('uname_admin', $user['username']);
 
                 if ($user['status'] !== 'aktif') {
                     $alertMessage = "Status akun tidak aktif, silahkan hubungi Superuser!";
@@ -139,12 +141,13 @@ class Auth extends Controller
     }
 
 
-
     public function logout()
     {
         $session = session();
-        $session->remove(['logged_in', 'user_id']);
+        $session->destroy();
 
         return redirect()->to('login-admin');
     }
+
+
 }

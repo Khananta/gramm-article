@@ -15,15 +15,16 @@
             <div class="form-group my-2">
                 <label for="gambar">Gambar</label>
                 <?php if (empty($artikel->gambar)): ?>
-                    <input type="file" class="form-control" id="gambar" name="gambar" required>
+                    <input type="file" class="form-control" id="gambar" name="gambar" accept=".png, .jpg, .jpeg" required>
                 <?php else: ?>
                     <div class="mb-2">
                         <img src="<?= base_url('/img/' . $artikel->gambar) ?>" alt="Gambar saat ini"
                             style="max-width: 200px;">
                     </div>
-                    <input type="file" class="form-control" id="gambar" name="gambar">
+                    <input type="file" class="form-control" id="gambar" name="gambar" accept=".png, .jpg, .jpeg">
                 <?php endif; ?>
             </div>
+
             <div class="mt-4">
                 <label for="status">Status Artikel:</label>
                 <select name="status" id="status">
@@ -32,14 +33,8 @@
                 </select>
             </div>
             <div class="mt-4">
-                <label for="pembuat">Pilih Pembuat:</label>
-                <select name="pembuat" id="pembuat">
-                    <?php foreach ($pembuatList as $pembuat): ?>
-                        <option value="<?= $pembuat['nama'] ?>" <?= $artikel->pembuat == $pembuat['nama'] ? 'selected' : '' ?>>
-                            <?= $pembuat['nama'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <label for="pembuat">Nama Pembuat Artikel</label>
+                <input type="text" class="form-control" id="pembuat" name="pembuat" value="<?= $adminName ?>" readonly>
             </div>
             <div class="mt-3 text-end">
                 <a href="<?= site_url('/article/' . $artikel->id_kategori) ?>" class="btn btn-danger">Batal</a>

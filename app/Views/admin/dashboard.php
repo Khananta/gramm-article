@@ -1,4 +1,13 @@
 <h1 class="fw-bolder my-5 text-center">Kumpulan Kategori</h1>
+
+<form class="col-lg-12 mt-3 mb-3" method="get">
+    <div class="input-group">
+        <input type="text" name="search" class="form-control" placeholder="Temukan artikel.."
+            value="<?= htmlspecialchars($searchKeyword) ?>">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+    </div>
+</form>
+
 <div class="card">
     <div class="card-header col text-start">
         <div class="row">
@@ -48,7 +57,7 @@
     </div>
 </div>
 
-<div class="card">
+<div class="card table-responsive">
     <div class="card-body">
         <form id="delete-form" action="<?= site_url('/deletecategory') ?>" method="post">
             <table class="table">
@@ -60,6 +69,7 @@
                         <th>No.</th>
                         <th>Nama Kategori</th>
                         <th>Terakhir Update</th>
+                        <th>Jumlah Artikel</th>
                         <th>Status</th>
                         <th>Aksi</th>
                     </tr>
@@ -80,9 +90,13 @@
                                     <?= $category['nama_kategori']; ?>
                                 </a>
                             </td>
-
                             <td>
                                 <?= $category['last_updated']; ?>
+                            </td>
+                            <td>
+                                <span class="mx-5">
+                                    <?= $articleCounts[$category['id_kategori']] ?? 0 ?>
+                                </span>
                             </td>
                             <td>
                                 <span
@@ -99,6 +113,12 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            <p class="fw-bold"><i class="fa-solid fa-bookmark"></i>
+                <?= $totalCategories ?> Kategori
+            </p>
+            <p class="fw-bold"><i class="fa-solid fa-bookmark"></i>
+                <?= $count ?> Artikel
+            </p>
         </form>
     </div>
 </div>
@@ -108,13 +128,15 @@
         <?php for ($i = 1; $i <= $totalPages; $i++): ?>
             <li
                 class="page-item <?= $i === (isset($_GET['halaman-ke']) ? (int) $_GET['halaman-ke'] : 1) ? 'active' : '' ?>">
-                <a class="page-link" href="<?= site_url('/dashboard?halaman-ke=' . $i) ?>"><?= $i ?></a>
+                <a class="page-link" href="<?= site_url('/dashboard?halaman-ke=' . $i) ?>">
+                    <?= $i ?>
+                </a>
             </li>
         <?php endfor; ?>
     </ul>
 </div>
 
-<div class=" modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -270,16 +292,63 @@ if ($response && $response['status'] === 'success'):
             cancelButtonText: 'Tidak'
         }).then((result) => {
             if (result.isConfirmed) {
-                Swal.fire({
-                    title: 'Konfirmasi perubahan data',
-                    text: 'Data akan disimpan.',
-                    icon: 'success',
-                    confirmButtonColor: '#3085d6',
-                    confirmButtonText: 'Ok',
-                }).then(() => {
-                    editForm.submit();
-                });
+                // Submit the form via AJAX to handle the response
+                fetch(editForm.action, {
+                    method: 'POST',
+                    body: new FormData(editForm),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            // Success message
+                            Swal.fire({
+                                title: 'Sukses!',
+                                text: data.message,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                // Redirect or perform any necessary action
+                                window.location.reload(); // Example: Reload the page
+                            });
+                        } else {
+                            // Error message
+                            Swal.fire({
+                                title: 'Gagal!',
+                                text: data.message,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
             }
         });
     }
+</script>
+
+<!-- Add this script to display SweetAlert messages -->
+<script>
+    <?php if (session()->has('response')): ?>
+        document.addEventListener('DOMContentLoaded', function () {
+            <?php if (session('response')['status'] === 'success'): ?>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sukses!',
+                    text: '<?= session('response')['message'] ?>',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            <?php elseif (session('response')['status'] === 'error'): ?>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: '<?= session('response')['message'] ?>',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+            <?php endif; ?>
+        });
+    <?php endif; ?>
 </script>

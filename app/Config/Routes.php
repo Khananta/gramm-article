@@ -30,6 +30,7 @@ $routes->setAutoRoute(true);
 
 // DASHBOARD ADMIN
 $routes->get('/dashboard', 'Dashboard::dashboard');
+// $routes->get('/dashboard-superuser', 'Admin::admin_list');
 $routes->post('/addcategory', 'Dashboard::addcategory');
 $routes->post('/editcategory', 'Dashboard::editcategory');
 $routes->post('/deletecategory', 'Dashboard::deletecategory');
@@ -50,6 +51,9 @@ $routes->get('/login-admin', 'Auth::index');
 $routes->post('register', 'Auth::processRegistration');
 $routes->get('logout', 'Auth::logout');
 
+
+
+$routes->post('/forgot-password', 'Auth::sendPasswordResetEmail');
 // $routes->get('admin/toggleAdminStatus/(:num)/(:alpha)', 'Admin::toggleAdminStatus/$1/$2');
 // $routes->get('admin/toggleKategoriStatus/(:num)/(:alpha)', 'Admin::toggleKategoriStatus/$1/$2');
 
@@ -72,3 +76,4 @@ $routes->get('logout', 'Auth::logout');
 if (is_file(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
     require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
 }
+

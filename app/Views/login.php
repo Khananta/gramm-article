@@ -43,7 +43,7 @@
                         <div class="mt-4">
                             <label class="form-label text-light">Username or Email</label>
                             <input type="text" name="username_or_email" placeholder="Enter username or email"
-                                class="form-control">
+                                class="form-control">   
                         </div>
                         <div class="mt-4">
                             <label for="exampleInputPassword1" class="form-label text-light">Password</label>

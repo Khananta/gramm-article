@@ -27,39 +27,55 @@
 </head>
 
 <body>
-    <!-- NAVBAR -->
-    <nav class="navbar sticky-top navbar-expand-lg navbar-dark" style="background-color: #111111;">
+    <!-- Navbar -->
+    <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-
             <a class="navbar-brand" href="/dashboard">
-                <!-- <span style="font-family: 'Inter'; font-weight: bold; color: red;">Gra</span><span
-                    style="font-family: 'Inter'; font-weight: bold; color: white;">mm
-                    <span style="font-family: 'Inter'; font-weight: bold; color: white;">- Admin</span>
-                </span> -->
                 <img src="/Img/LogoNew.png" alt="Gramm Logo" width="40px">
             </a>
 
-            <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto nav">
-                    <li class="nav-item">
-                        <a class="nav-link <?= ($current_page === 'dashboard') ? 'active' : '' ?>"
-                            href="/dashboard">Beranda</a>
+                <ul class="navbar-nav mx-auto nav">
+                    <li class="nav-item mx-lg-3">
+                        <a class="nav-link <?= ($current_page === 'dashboard') ? 'active' : '' ?>" href="/dashboard">
+                            <i class="fa-solid fa-house"></i> Beranda
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?= ($current_page === 'admin') ? 'active' : '' ?>"
-                            href="/adminlist">Admin</a>
+                        <a class="nav-link <?= ($current_page === 'admin') ? 'active' : '' ?>" href="/adminlist">
+                        <i class="fa-solid fa-users"></i> Admin
+                        </a>
                     </li>
                 </ul>
-                <a href="/logout">
-                    <button class="btn btn-primary px-4 col-sm-12 my-lg-0 mt-1 mb-2">Logout</button>
-                </a>
+
+                <!-- Dropdown Profil -->
+                <?php if (session()->get('logged_in')): ?>
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-light" href="#" id="navbarDropdownMenuLink" role="button"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                
+                            <?= session()->get('nama_admin') ?> <!-- Menampilkan nama pengguna di sini -->
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <!-- Tambahkan atribut data-bs-toggle dan data-bs-target untuk membuka modal -->
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                data-bs-target="#profileModal"><i class="fa-solid fa-user" style="color: #000000;"></i> Profil</a>
+                            <a class="dropdown-item bg-danger text-light" href="/logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <!-- Tambahkan tautan login di sini jika diperlukan -->
+                <?php endif; ?>
+
             </div>
         </div>
     </nav>
+
 
     <!-- Bagian tampilan pesan selamat datang -->
     <?php if (session()->has('pesan_selamat_datang')): ?>
@@ -96,6 +112,31 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"
         integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous">
         </script>
+<!-- Modal Profil -->
+<!-- Modal Profil -->
+<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Profil Admin</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Nama:</strong> <?= session()->get('nama_admin') ?></p>
+                <p><strong>Username:</strong> <?= session()->get('uname_admin') ?></p>
+                <p><strong>Email:</strong> <?= session()->get('email_admin') ?></p>
+                <p><strong>Tipe:</strong> <?= session()->get('tipe') ?></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+ 
 </body>
+
 
 </html>

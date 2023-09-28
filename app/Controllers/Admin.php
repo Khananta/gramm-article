@@ -50,65 +50,98 @@ class Admin extends Controller
         return $this->response->setJSON($response);
     }
     public function edit_admin()
-{
-    $adminId = $this->request->getPost('admin_id');
-    $editData = [
-        'nama' => $this->request->getPost('edit_nama'),
-        'username' => $this->request->getPost('edit_username'),
-        'email' => $this->request->getPost('edit_email'),
-        'password' => $this->request->getPost('edit_password'),
-        'status' => $this->request->getPost('edit_status'),
-        'tipe' => $this->request->getPost('edit_tipe'),
-    ];
+    {
+        $adminId = $this->request->getPost('admin_id');
+        $editData = [
+            'nama' => $this->request->getPost('edit_nama'),
+            'username' => $this->request->getPost('edit_username'),
+            'email' => $this->request->getPost('edit_email'),
+            'password' => $this->request->getPost('edit_password'),
+            'status' => $this->request->getPost('edit_status'),
+            'tipe' => $this->request->getPost('edit_tipe'),
+        ];
 
-    $adminModel = new Dafmin_Model();
+        $adminModel = new Dafmin_Model();
 
-    // Periksa apakah nama sudah ada dalam database selain admin yang sedang diedit
-    $existingAdminNama = $adminModel->where('nama', $editData['nama'])->where('id !=', $adminId)->first();
+        // Periksa apakah nama sudah ada dalam database selain admin yang sedang diedit
+        $existingAdminNama = $adminModel->where('nama', $editData['nama'])->where('id !=', $adminId)->first();
 
-    if ($existingAdminNama) {
-        // Nama sudah ada dalam database, tampilkan pesan kesalahan
+        if ($existingAdminNama) {
+            // Nama sudah ada dalam database, tampilkan pesan kesalahan
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal diperbarui. Nama sudah tersedia',
+            ];
+            return redirect()->to('/adminlist')->with('response', $response);
+        }
+
+        // Periksa apakah username sudah ada dalam database selain admin yang sedang diedit
+        $existingAdminUsername = $adminModel->where('username', $editData['username'])->where('id !=', $adminId)->first();
+
+        if ($existingAdminUsername) {
+            // Username sudah ada dalam database, tampilkan pesan kesalahan
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal diperbarui. Username sudah tersedia',
+            ];
+            return redirect()->to('/adminlist')->with('response', $response);
+        }
+
+        // Periksa apakah email sudah ada dalam database selain admin yang sedang diedit
+        $existingAdminEmail = $adminModel->where('email', $editData['email'])->where('id !=', $adminId)->first();
+
+        if ($existingAdminEmail) {
+            // Email sudah ada dalam database, tampilkan pesan kesalahan
+            $response = [
+                'status' => 'error',
+                'message' => 'Data gagal diperbarui. Email sudah tersedia',
+            ];
+            return redirect()->to('/adminlist')->with('response', $response);
+        }
+
+        // Jika tidak ada data yang sama, update data admin
+        $adminModel->updateAdminWithLastUpdated($adminId, $editData);
+
+        // Tampilkan SweetAlert data berhasil diedit
         $response = [
-            'status' => 'error',
-            'message' => 'Data gagal diperbarui. Nama sudah tersedia',
+            'status' => 'success',
+            'message' => 'Data admin berhasil diperbarui!',
         ];
         return redirect()->to('/adminlist')->with('response', $response);
     }
 
-    // Periksa apakah username sudah ada dalam database selain admin yang sedang diedit
-    $existingAdminUsername = $adminModel->where('username', $editData['username'])->where('id !=', $adminId)->first();
+    public function update_status()
+    {
+        $adminIds = json_decode($this->request->getPost('admin_ids')); // Ambil ID admin dari data POST
+        $status = $this->request->getPost('status');
+        $affectedRows = 0;
 
-    if ($existingAdminUsername) {
-        // Username sudah ada dalam database, tampilkan pesan kesalahan
-        $response = [
-            'status' => 'error',
-            'message' => 'Data gagal diperbarui. Username sudah tersedia',
-        ];
-        return redirect()->to('/adminlist')->with('response', $response);
+        if ($adminIds) {
+            $adminModel = new Dafmin_Model();
+
+            foreach ($adminIds as $adminId) {
+                // Update status admin sesuai dengan $status (aktif atau nonaktif)
+                $data = [
+                    'status' => $status,
+                    'last_updated' => date('Y-m-d H:i:s')
+                ];
+                $adminModel->update($adminId, $data); // Menggunakan metode update bawaan CodeIgniter
+                $affectedRows++;
+            }
+        }
+
+        if ($affectedRows > 0) {
+            $response = [
+                'status' => 'success',
+                'message' => "Berhasil mengubah status $affectedRows admin."
+            ];
+        } else {
+            $response = [
+                'status' => 'error',
+                'message' => 'Tidak ada admin yang dipilih untuk diubah statusnya.'
+            ];
+        }
+
+        return $this->response->setJSON($response);
     }
-
-    // Periksa apakah email sudah ada dalam database selain admin yang sedang diedit
-    $existingAdminEmail = $adminModel->where('email', $editData['email'])->where('id !=', $adminId)->first();
-
-    if ($existingAdminEmail) {
-        // Email sudah ada dalam database, tampilkan pesan kesalahan
-        $response = [
-            'status' => 'error',
-            'message' => 'Data gagal diperbarui. Email sudah tersedia',
-        ];
-        return redirect()->to('/adminlist')->with('response', $response);
-    }
-
-    // Jika tidak ada data yang sama, update data admin
-    $adminModel->updateAdminWithLastUpdated($adminId, $editData);
-
-    // Tampilkan SweetAlert data berhasil diedit
-    $response = [
-        'status' => 'success',
-        'message' => 'Data admin berhasil diperbarui!',
-    ];
-    return redirect()->to('/adminlist')->with('response', $response);
-}
-
-
 }

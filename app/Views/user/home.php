@@ -2,16 +2,42 @@
 $is_searching = isset($_GET['search']) && !empty($_GET['search']);
 ?>
 
+<!-- Search -->
 <div class="container">
     <div class="row mt-4">
         <form method="GET" action="" class="col-lg-8 offset-lg-2">
             <div class="input-group">
-                <input type="text" name="search" class="form-control" placeholder="Temukan berbagai artikel menarik.."
+                <input type="text" name="search" class="form-control rounded-5 px-4 py-2" placeholder="Temukan berbagai artikel menarik.."
                     value="<?= $is_searching ? $_GET['search'] : ''; ?>">
-                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+                <!-- <button type="submit" class="btn btn-primary rounded-1"><i class="fas fa-search"></i></button> -->
             </div>
         </form>
     </div>
+<!-- Search -->
+        <div class="row">
+            <div class="col-lg-8 col-md-8 col-sm-12 offset-lg-2 offset-md-0 offset-sm-0">
+                <?php
+                $db = db_connect();
+                $query = "SELECT * FROM tb_kategori WHERE status = 'aktif'";
+                $result = $db->query($query);
+
+                if (!$result) {
+                    die('Koneksi ke database gagal: ' . mysqli_connect_error());
+                }
+
+                if ($result->getNumRows() > 0) {
+                    foreach ($result->getResult() as $row) {
+                        $id = $row->id_kategori;
+                        $title = $row->nama_kategori;
+                        echo '<a href="' . site_url('User/artkat/' . $id) . '" class="btn btn-outline-danger rounded-5 px-4 mt-3" style="margin-right: 16px;">' . $title . '</a>';
+                    }
+                } else {
+                    $empty = "Tidak ada data yang ditemukan.";
+                    echo '<p class="my-5 py-5 mx-5 text-center fs-6">' . $empty . '</p>';
+                }
+                ?>
+            </div>
+        </div>
 
     <?php if (!$is_searching): ?>
         <div class="row mt-3">
@@ -34,7 +60,7 @@ $is_searching = isset($_GET['search']) && !empty($_GET['search']);
                     $active_indicator = true;
                     $slide_number = 0;
                     ?>
-                    <div id="carouselExampleCaptions" class="carousel slide mt-4" data-bs-ride="false">
+                    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="false">
                         <div class="carousel-indicators">
                             <?php
                             while ($row_popular = mysqli_fetch_assoc($result_popular)):
@@ -119,7 +145,7 @@ $is_searching = isset($_GET['search']) && !empty($_GET['search']);
                 WHERE judul LIKE '%$search%' AND status = 'aktif'
             ) a 
             INNER JOIN tb_kategori k ON a.id_kategori = k.id_kategori
-            WHERE a.row_num <= 3 AND k.status = 'aktif'
+            WHERE a.row_num <= 2 AND k.status = 'aktif'
             ORDER BY k.id_kategori, a.id";
 
         $result = mysqli_query($conn, $query);

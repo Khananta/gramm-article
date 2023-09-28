@@ -40,7 +40,10 @@ class User extends BaseController
     {
         $kategoriModel = new Kategori_Model();
         $categories = $kategoriModel->getCategories();
-        $articles = $kategoriModel->getArticlesByKategori($id_kategori);
+        $search = isset($_GET['search']) ? $_GET['search'] : '';
+        $sort = isset($_GET['sort']) ? $_GET['sort'] : '';
+
+        $articles = $kategoriModel->getArticlesByKategori($id_kategori, $search, $sort);
 
         // Tambahkan logika pengurutan
         $sort = isset($_GET['sort']) ? $_GET['sort'] : '';

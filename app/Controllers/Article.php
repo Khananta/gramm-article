@@ -19,10 +19,6 @@ class Article extends Controller
             return $kategori['id_kategori'] == $id_kategori;
         });
 
-        if (!session()->get('logged_in')) {
-            return redirect()->to('/login-admin');
-        }
-
         $data = [
             'page' => 'admin/kategori',
             'articles' => $articles,
@@ -30,16 +26,31 @@ class Article extends Controller
             'kategori_nama' => !empty($kategori) ? reset($kategori)['nama_kategori'] : '',
         ];
 
-        return view('template_admin', $data);
+        $userRole = session()->get('tipe');
+
+        if ($userRole === 'superuser') {
+            return view('template_admin', $data);
+        } elseif ($userRole === 'admin') {
+            $datmin = new Dafmin_Model();
+            $userId = session()->get('user_id');
+            $admin = $datmin->find($userId);
+
+            if ($admin['status'] === 'nonaktif') {
+                session()->destroy();
+                return redirect()->to('/login-admin')->with('error', 'Akun Anda telah dinonaktifkan.');
+            }
+            return view('admin_2', $data);
+        } else {
+            return redirect()->to('/dashboard');
+        }
     }
     public function addarticle()
     {
-        if (!session()->get('logged_in')) {
-            return redirect()->to('/login-admin');
-        }
-
         $datminModel = new Dafmin_Model();
         $adminData = $datminModel->getAdminData();
+
+        // Get the name of the logged-in admin from the session
+        $namaAdmin = session()->get('nama_admin');
 
         $datminModel = new Dafmin_Model();
         $pembuatList = $datminModel->getPembuatList();
@@ -49,10 +60,38 @@ class Article extends Controller
             'page' => 'admin/tambah_data',
             'adminData' => $adminData,
             'pembuatList' => $pembuatList,
+            'nama_admin' => $namaAdmin,
+            // Pass the name of the admin to the view
         ];
 
-        return view('template_admin', $data);
+        // Check the user's role (tipe) from the session
+        $userRole = session()->get('tipe');
+
+        if ($userRole === 'superuser') {
+            // Load the superuser template view
+            return view('template_admin', $data);
+        } elseif ($userRole === 'admin') {
+            // Check if the admin status is 'nonaktif', and if so, logout and redirect
+            $datminModel = new Dafmin_Model();
+            $userId = session()->get('user_id');
+            $admin = $datminModel->find($userId);
+
+            if ($admin['status'] === 'nonaktif') {
+                // Logout the admin
+                session()->destroy();
+                return redirect()->to('/login-admin')->with('error', 'Akun Anda telah dinonaktifkan.');
+            }
+
+            // Load the admin template view
+            return view('admin_2', $data);
+        } else {
+            // Handle other roles or invalid roles here (e.g., redirect to a default page)
+            return redirect()->to('/default-page');
+        }
     }
+
+
+
     public function savearticle()
     {
         $model = new User_Model();
@@ -81,7 +120,7 @@ class Article extends Controller
             'last_updated' => $last_updated
         ];
 
-        $save=$model->insert($data);
+        $save = $model->insert($data);
 
         if ($save) {
             // jika pembaruan berhasil, redirect ke halaman kategori yang sesuai
@@ -97,6 +136,7 @@ class Article extends Controller
     }
     public function editarticle($id)
     {
+        // Check if the user is not logged in
         if (!session()->get('logged_in')) {
             return redirect()->to('/login-admin');
         }
@@ -107,14 +147,42 @@ class Article extends Controller
         $datminModel = new Dafmin_Model();
         $pembuatList = $datminModel->getPembuatList();
 
+        // Get the name of the admin who created the article
+        $adminName = $artikel->pembuat;
+
         $data = [
             'current_page' => 'edit_data',
             'page' => 'admin/edit_data',
             'artikel' => $artikel,
             'pembuatList' => $pembuatList,
+            'adminName' => $adminName,
+            // Pass the admin's name to the view
         ];
 
-        return view('template_admin', $data);
+        // Check the user's role (tipe) from the session
+        $userRole = session()->get('tipe');
+
+        if ($userRole === 'superuser') {
+            // Load the superuser template view
+            return view('template_admin', $data);
+        } elseif ($userRole === 'admin') {
+            // Check if the admin status is 'nonaktif', and if so, logout and redirect
+            $datminModel = new Dafmin_Model();
+            $userId = session()->get('user_id');
+            $admin = $datminModel->find($userId);
+
+            if ($admin['status'] === 'nonaktif') {
+                // Logout the admin
+                session()->destroy();
+                return redirect()->to('/login-admin')->with('error', 'Akun Anda telah dinonaktifkan.');
+            }
+
+            // Load the admin template view
+            return view('admin_2', $data);
+        } else {
+            // Handle other roles or invalid roles here (e.g., redirect to a default page)
+            return redirect()->to('/dashboard');
+        }
     }
     public function updatearticle()
     {

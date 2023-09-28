@@ -37,15 +37,22 @@ class Dafmin_Model extends Model
     }
 
     public function isUsernameUnique($username, $adminId)
-{
-    // Check if the username exists in the database except for the current admin
-    $builder = $this->db->table($this->table);
-    $builder->where('username', $username);
-    $builder->where('id !=', $adminId); // Exclude the current admin by ID
-    $result = $builder->get()->getRow();
+    {
+        // Check if the username exists in the database except for the current admin
+        $builder = $this->db->table($this->table);
+        $builder->where('username', $username);
+        $builder->where('id !=', $adminId); // Exclude the current admin by ID
+        $result = $builder->get()->getRow();
 
-    // If a row is returned, the username is not unique
-    return empty($result);
-}
-
+        // If a row is returned, the username is not unique
+        return empty($result);
+    }
+    public function updateAdminStatus($adminId, $status)
+    {
+        // Update the admin's status in the database
+        $data = [
+            'status' => $status,
+        ];
+        $this->set($data)->where('id', $adminId)->update();
+    }
 }

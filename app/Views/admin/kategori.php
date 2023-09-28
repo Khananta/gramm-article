@@ -1,3 +1,34 @@
+<?php
+// Define pagination parameters
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$itemsPerPage = 2; // Set the number of items per page
+
+function compareArticles($article1, $article2)
+{
+    $date1 = strtotime($article1['last_updated']);
+    $date2 = strtotime($article2['last_updated']);
+
+    if ($date1 == $date2) {
+        return 0;
+    }
+
+    return ($date1 > $date2) ? -1 : 1;
+}
+usort($articles, 'compareArticles');
+
+$searchKeyword = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+$filteredArticles = array_filter($articles, function ($article) use ($searchKeyword) {
+    $title = strtolower($article['judul']);
+    return empty($searchKeyword) || strpos($title, strtolower($searchKeyword)) !== false;
+});
+
+// Calculate pagination limits
+$totalItems = count($filteredArticles);
+$offset = ($page - 1) * $itemsPerPage;
+$paginatedArticles = array_slice($filteredArticles, $offset, $itemsPerPage);
+?>
+
 <div class="row align-items-center mb-3 mt-5">
     <div class="col-lg-12">
         <a href="/dashboard" style="text-decoration:none;" class="fs-5"><i
@@ -10,13 +41,13 @@
         <?php endif; ?>
     </div>
 
-    <form class="col-lg-12 mt-3">
+    <form class="col-lg-12 mt-3" method="get">
         <div class="input-group">
-            <input type="text" name="search" id="searchInput" class="form-control" placeholder="Temukan artikel..">
+            <input type="text" name="search" class="form-control" placeholder="Temukan artikel.."
+                value="<?= htmlspecialchars($searchKeyword) ?>">
             <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
         </div>
     </form>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var currentURL = window.location.href;
@@ -37,13 +68,13 @@
     </script>
 </div>
 
-
 <div class="card mt-4">
     <div class="card-header col text-start">
         <div class="row">
             <div class="col-6">
-                <a id="tambahArtikelLink" href="#" data-id-kategori="<?= $id_kategori ?>">
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                <a id="tambahArtikelLink" href="<?= site_url('/addarticle?id_kategori=' . $id_kategori) ?>"
+                    data-id-kategori="<?= $id_kategori ?>">
+                    <button type="button" class="btn btn-primary">
                         <span class="text"><i class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah
                             Artikel</span>
                     </button>
@@ -60,7 +91,7 @@
 <div class="card">
     <div class="card-body">
         <form id="delete-form" action="<?= site_url('/deletearticle') ?>" method="post">
-            <?php if (!empty($articles)): ?>
+            <?php if (!empty($paginatedArticles)): ?>
                 <table class="table">
                     <thead>
                         <tr>
@@ -77,7 +108,7 @@
                     </thead>
                     <tbody>
                         <?php $counter = 1; ?>
-                        <?php foreach ($articles as $article): ?>
+                        <?php foreach ($paginatedArticles as $article): ?>
                             <tr>
                                 <td>
                                     <input type="checkbox" name="article_to_delete[]" value="<?= $article['id'] ?>"
@@ -101,7 +132,8 @@
                                         <?= $article['pembuat'] ?>
                                     </p>
                                 </td>
-                                <td><span
+                                <td>
+                                    <span
                                         class="status-indicator <?= $article['status'] === 'aktif' ? 'aktif' : 'nonaktif' ?> mx-3"></span>
                                 </td>
                                 <td>
@@ -112,6 +144,21 @@
                         <?php endforeach; ?>
                     </tbody>
                 </table>
+
+                <!-- Display pagination links -->
+                <div class="pagination">
+                    
+
+                    <?php $totalPages = ceil($totalItems / $itemsPerPage); ?>
+                    <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                        <?php $isActive = ($i === $page) ? 'active' : ''; ?>
+                        <a class="page-link rounded-1 <?= $isActive ?>"
+                            href="?page=<?= $i ?>&search=<?= urlencode($searchKeyword) ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php endfor; ?>
+                </div>
+
             <?php else: ?>
                 <p class="mt-5 text-center fs-6 pt-5 mb-5 pb-5">Tidak ada data yang ditemukan.</p>
             <?php endif; ?>

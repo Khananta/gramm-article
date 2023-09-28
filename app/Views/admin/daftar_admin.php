@@ -2,8 +2,9 @@
 
 <div class="card">
     <div class="card-header col text-start">
-        <div class="row">
-            <div class="col-6">
+        <div class="row align-items-center">
+            <div
+                class="col-xl-6 col-lg-4 col-md-2 col-sm-2 col-xs-12 text-xl-start text-lg-start text-md-start text-sm-start">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <span class="text"><i class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah Admin</span>
                 </button>
@@ -68,22 +69,26 @@
                     </div>
                 </div>
             </div>
-            <div class="col-6 text-end">
-                <button type="button" class="btn btn-success" onclick="konfirmasiHapusMultiple()"><i
-                        class="fa-solid fa-check" style="color: #ffffff;"></i> Aktifkan Terpilih</button>
-                <button type="button" class="btn btn-warning fw-bold text-light" onclick="konfirmasiHapusMultiple()"><i
-                        class="fa-solid fa-x" style="color: #ffffff;"></i> Nonaktifkan Terpilih</button>
-                <button type="button" class="btn btn-danger" onclick="konfirmasiHapusMultiple()"><i
-                        class="fa-solid fa-trash" style="color: #ffffff;"></i> Hapus Terpilih</button>
+            <div
+                class="col-xl-6 col-lg-8 col-sm-10 col-md-10 col-xs-12 text-xl-end text-lg-end text-md-end text-sm-end mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0">
+                <button type="button" class="btn btn-success" onclick="updateAdminStatus('aktif')">
+                    <i class="fa-solid fa-check" style="color: #ffffff;"></i> Aktifkan Terpilih
+                </button>
+                <button type="button" class="btn btn-danger" onclick="updateAdminStatus('nonaktif')">
+                    <i class="fa-solid fa-x" style="color: #ffffff;"></i> Nonaktifkan Terpilih
+                </button>
+                <button type="button" class="btn btn-danger mt-xl-0 mt-lg-0 mt-md-0 mt-sm-2"
+                    onclick="konfirmasiHapusMultiple()"><i class="fa-solid fa-trash" style="color: #ffffff;"></i> Hapus
+                    Terpilih</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card">
+<div class="card table-responsive">
     <div class="card-body">
         <form id="delete-form" action="<?= site_url('Admin/hapus_multiple_admin') ?>" method="post">
-            <table class="table">
+            <table class="table table-hover table-bordered">
                 <thead>
                     <tr>
                         <th>
@@ -136,8 +141,7 @@
                                         '<?= $admin['email'] ?>',
                                         '<?= $admin['password'] ?>',
                                         '<?= $admin['tipe'] ?>',
-                                        '<?= $admin['status'] ?>'
-                                    )">Edit</a>
+                                    )"><i class="fa-solid fa-pen" style="color: #ffffff;"></i> Edit</a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -184,13 +188,6 @@
                         <select name="edit_tipe" id="edit-tipe" class="form-control">
                             <option value="superuser">Superuser</option>
                             <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit-status" class="form-label">Status</label>
-                        <select name="edit_status" id="edit-status" class="form-control">
-                            <option value="aktif">Aktif</option>
-                            <option value="nonaktif">Nonaktif</option>
                         </select>
                     </div>
                 </form>
@@ -314,10 +311,77 @@ if ($response && $response['status'] === 'success'):
             });
         }
     }
+    function updateAdminStatus(status) {
+        const selectedCheckboxes = document.querySelectorAll('input[name="admins_to_delete[]"]:checked');
+
+        if (selectedCheckboxes.length === 0) {
+            Swal.fire({
+                title: 'Tidak ada data yang dipilih',
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        } else {
+            const adminIds = Array.from(selectedCheckboxes).map(checkbox => checkbox.value);
+
+            let confirmationMessage;
+            if (status === 'aktif') {
+                confirmationMessage = 'Apakah Anda yakin ingin mengaktifkan admin terpilih?';
+            } else {
+                confirmationMessage = 'Apakah Anda yakin ingin menonaktifkan admin terpilih?';
+            }
+
+            Swal.fire({
+                title: confirmationMessage,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya',
+                cancelButtonText: 'Tidak'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Kirim permintaan AJAX ke server untuk mengubah status admin
+                    // Anda harus mengirim daftar ID admin yang dipilih dan status yang dipilih ke server
+                    const formData = new FormData();
+                    formData.append('admin_ids', JSON.stringify(adminIds));
+                    formData.append('status', status);
+
+                    fetch('Admin/update_status', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                Swal.fire({
+                                    title: 'Sukses!',
+                                    text: data.message,
+                                    icon: 'success',
+                                    confirmButtonText: 'OK'
+                                }).then(() => {
+                                    window.location.reload(); // Refresh halaman setelah berhasil
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: 'Gagal!',
+                                    text: data.message,
+                                    icon: 'error',
+                                    confirmButtonText: 'OK'
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                }
+            });
+        }
+    }
 </script>
 
 <script>
-    function openEditModal(id, nama, username, email, password, tipe, status) {
+    function openEditModal(id, nama, username, email, password, tipe) {
         const editForm = document.getElementById('edit-form');
         document.getElementById('edit-admin-id').value = id;
         document.getElementById('edit-nama').value = nama;
@@ -325,75 +389,64 @@ if ($response && $response['status'] === 'success'):
         document.getElementById('edit-email').value = email;
         document.getElementById('edit-password').value = password;
         document.getElementById('edit-tipe').value = tipe;
-        document.getElementById('edit-status').value = status;
 
         const editModal = new bootstrap.Modal(document.getElementById('editModal'));
         editModal.show();
     }
 
     function confirmSave() {
-    const editForm = document.getElementById('edit-form');
-    const statusDropdown = document.getElementById('edit-status');
-    const tipeDropdown = document.getElementById('edit-tipe');
+        const editForm = document.getElementById('edit-form');
+        const tipeDropdown = document.getElementById('edit-tipe');
 
-    const namaValue = document.getElementById("edit-nama").value.trim();
-    const usernameValue = document.getElementById("edit-username").value;
-    const emailValue = document.getElementById("edit-email").value.trim();
-    const passwordValue = document.getElementById("edit-password").value;
+        const namaValue = document.getElementById("edit-nama").value.trim();
+        const usernameValue = document.getElementById("edit-username").value;
+        const emailValue = document.getElementById("edit-email").value.trim();
+        const passwordValue = document.getElementById("edit-password").value;
 
-    if (namaValue === '' || usernameValue === '' || emailValue === '' || passwordValue === '') {
-        Swal.fire({
-            title: 'Data tidak boleh ada yang kosong!',
-            icon: 'warning',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok',
-        });
-        return false;
-    }
-
-    if (/\s/.test(usernameValue) || /\s/.test(emailValue) || /\s/.test(passwordValue)) {
-        Swal.fire({
-            title: 'Data tidak boleh mengandung spasi!',
-            icon: 'warning',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'Ok',
-        });
-        return false;
-    }
-
-    const selectedStatus = statusDropdown.value;
-    const selectedTipe = tipeDropdown.value;
-
-    const statusInput = document.createElement('input');
-    statusInput.type = 'hidden';
-    statusInput.name = 'edit_status';
-    statusInput.value = selectedStatus;
-
-    const tipeInput = document.createElement('input');
-    tipeInput.type = 'hidden';
-    tipeInput.name = 'edit_tipe';
-    tipeInput.value = selectedTipe;
-
-    editForm.appendChild(statusInput);
-    editForm.appendChild(tipeInput);
-
-    Swal.fire({
-        title: 'Konfirmasi perubahan data',
-        text: 'Anda yakin ingin menyimpan perubahan?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Ya',
-        cancelButtonText: 'Tidak'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            editForm.submit();
+        if (namaValue === '' || usernameValue === '' || emailValue === '' || passwordValue === '') {
+            Swal.fire({
+                title: 'Data tidak boleh ada yang kosong!',
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            });
+            return false;
         }
-    });
-}
 
+        if (/\s/.test(usernameValue) || /\s/.test(emailValue) || /\s/.test(passwordValue)) {
+            Swal.fire({
+                title: 'Data tidak boleh mengandung spasi!',
+                icon: 'warning',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'Ok',
+            });
+            return false;
+        }
+        
+        const selectedTipe = tipeDropdown.value;
 
+        const tipeInput = document.createElement('input');
+        tipeInput.type = 'hidden';
+        tipeInput.name = 'edit_tipe';
+        tipeInput.value = selectedTipe;
+
+        editForm.appendChild(tipeInput);
+
+        Swal.fire({
+            title: 'Konfirmasi perubahan data',
+            text: 'Anda yakin ingin menyimpan perubahan?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ya',
+            cancelButtonText: 'Tidak'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                editForm.submit();
+            }
+        });
+    }
 </script>
 
 <?php $response = session()->getFlashdata('response'); ?>
@@ -418,5 +471,3 @@ if ($response && $response['status'] === 'success'):
         </script>
     <?php endif; ?>
 <?php endif; ?>
-
-

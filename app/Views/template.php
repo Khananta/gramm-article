@@ -27,48 +27,16 @@
     <nav class="navbar sticky-top navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="/User/home">
-                <span class="text-danger">Gra</span>mm</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                <span class="text-danger"><img src="/Img/LogoNew.png" width="40px" alt=""></a>
+            <!-- <button class="" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link <?= ($current_page === 'home') ? 'active' : '' ?>"
-                            href="/User/home">Beranda</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?= ($current_page === 'kategori') ? 'active' : '' ?>"
-                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Kategori
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <?php
-                            $db = db_connect();
-                            $query = "SELECT * FROM tb_kategori WHERE status = 'aktif'"; // Menambahkan WHERE untuk filter status
-                            $result = $db->query($query);
-
-                            if (!$result) {
-                                die('Koneksi ke database gagal: ' . mysqli_connect_error());
-                            }
-
-                            if ($result->getNumRows() > 0) {
-                                foreach ($result->getResult() as $row) {
-                                    $id = $row->id_kategori;
-                                    $title = $row->nama_kategori;
-                                    echo '<a class="dropdown-item" href="' . site_url('User/artkat/' . $id) . '">' . $title . '</a>';
-                                }
-                            } else {
-                                $empty = "Tidak ada data yang ditemukan.";
-                                echo '<p class="my-5 py-5 mx-5 text-center fs-6">' . $empty . '</p>';
-                            }
-                            ?>
-                        </div>
-                    </li>
-
-                </ul>
-            </div>
+            </button> -->
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link <?= ($current_page === 'home') ? 'active' : '' ?>" href="/User/home">Beranda</a>
+                </li>
+            </ul>
         </div>
     </nav>
 
@@ -96,8 +64,9 @@
                             <i class="fa-brands fa-twitter px-4 fa-2x" style="color: #ffffff;"></i>
                         </a>
                     </div>
-                    <div class="col-xl-2 offset-xl-2 py-5 col-lg-2 offset-lg-1 col-md-2 col-sm-3">
-                        <h1 class="fw-bolder" style="color: #F91111;">Gra<span style="color: #fff;">mm</span></h1>
+                    <div class="col-xl-1 offset-xl-2 py-5 col-lg-2 offset-lg-1 col-md-2 col-sm-3">
+                        <h1 class="fw-bolder" style="color: #F91111;"><img src="/Img/LogoNew.png" class="img-fluid"
+                                alt=""></span></h1>
                     </div>
                     <div
                         class="col-xl-2 offset-xl-3 py-5 col-lg-2 offset-lg-3 col-md-3 offset-md-1 col-sm-12 d-sm-none d-md-block d-lg-block">

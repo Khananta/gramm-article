@@ -22,12 +22,9 @@
                 </select>
             </div>
             <div class="mt-4">
-                <label for="adminDropdown">Pilih Admin:</label>
-                <select name="pembuat" id="pembuat">
-                    <?php foreach ($pembuatList as $pembuat): ?>
-                        <option value="<?= $pembuat['nama'] ?>"><?= $pembuat['nama'] ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <label for="pembuat">Nama Pembuat Artikel</label>
+                <input type="text" class="form-control" id="pembuat" name="pembuat" value="<?= $nama_admin ?>" readonly>
+
             </div>
             <div class="mt-4 text-end">
                 <a href="<?= site_url('/article/' . $_GET['id_kategori']) ?>" class="btn btn-danger"
