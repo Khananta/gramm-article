@@ -52,6 +52,7 @@ class Dashboard extends Controller
         $data = [
             'current_page' => 'dashboard',
             'page' => 'admin/dashboard',
+            'itemsPerPage' => $itemsPerPage,
             'categories' => $categoriesToDisplay,
             'admin' => $admin,
             'count' => $count,
@@ -59,9 +60,8 @@ class Dashboard extends Controller
             'currentPage' => $currentpage,
             'totalCategories' => $totalCategories,
             'articleCounts' => $articleCounts,
-            // Add this line to pass the articleCounts to the view
+            'searchKeyword' => $searchKeyword,
         ];
-
 
         $userRole = $session->get('tipe');
 
@@ -73,7 +73,6 @@ class Dashboard extends Controller
             return redirect()->to('/dashboard');
         }
     }
-
 
     public function addcategory()
     {
@@ -134,6 +133,7 @@ class Dashboard extends Controller
 
         return $this->response->setJSON($response);
     }
+
     public function editcategory()
     {
         $kategoriId = $this->request->getPost('kategori_id');
@@ -177,6 +177,4 @@ class Dashboard extends Controller
         // Return the response as JSON
         return $this->response->setJSON($response);
     }
-
-
 }

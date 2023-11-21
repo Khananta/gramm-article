@@ -35,37 +35,35 @@ $paginatedArticles = array_slice($filteredArticles, $offset, $itemsPerPage);
                 class="fa-solid mb-4 fa-arrow-left text-decoration:none;"></i> Kembali</a>
         <h1>List Artikel</h1>
         <?php if (isset($kategori_nama)): ?>
-            <p>Kategori
-                <?= $kategori_nama ?>
-            </p>
+            <p>Kategori <?= $kategori_nama ?></p>
         <?php endif; ?>
     </div>
 
     <form class="col-lg-12 mt-3" method="get">
-        <div class="input-group">
-            <input type="text" name="search" class="form-control" placeholder="Temukan artikel.."
-                value="<?= htmlspecialchars($searchKeyword) ?>">
-            <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
-        </div>
+    <div class="input-group">
+        <input type="text" name="search" id="searchInput" class="form-control" placeholder="Temukan artikel.."
+            value="<?= htmlspecialchars($searchKeyword) ?>">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+    </div>
+</form>
+
     </form>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var currentURL = window.location.href;
-            var start = currentURL.lastIndexOf('/') + 1;
-            var id_kategori = currentURL.substring(start);
+    document.addEventListener('DOMContentLoaded', function () {
+        CKEDITOR.replace('konten');
+        var currentURL = window.location.href;
+        var start = currentURL.lastIndexOf('/') + 1;
+        var id_kategori = currentURL.substring(start);
+
+        if (id_kategori) {
             var tambahDataUrl = "/addarticle?id_kategori=" + id_kategori;
             document.getElementById('tambahArtikelLink').href = tambahDataUrl;
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var currentURL = window.location.href;
-            var start = currentURL.lastIndexOf('/') + 1;
-            var id_kategori = currentURL.substring(start);
-            var tambahDataUrl = "/deletearticle?id_kategori=" + id_kategori;
-            document.getElementById('hapusArtikelLink').href = tambahDataUrl;
-        });
-    </script>
+
+            var hapusDataUrl = "/deletearticle?id_kategori=" + id_kategori;
+            document.getElementById('hapusArtikelLink').href = hapusDataUrl;
+        }
+    });
+</script>
 </div>
 
 <div class="card mt-4">
@@ -75,14 +73,14 @@ $paginatedArticles = array_slice($filteredArticles, $offset, $itemsPerPage);
                 <a id="tambahArtikelLink" href="<?= site_url('/addarticle?id_kategori=' . $id_kategori) ?>"
                     data-id-kategori="<?= $id_kategori ?>">
                     <button type="button" class="btn btn-primary">
-                        <span class="text"><i class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah
-                            Artikel</span>
+                        <span class="text"><i class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah Artikel</span>
                     </button>
                 </a>
             </div>
             <div class="col-6 text-end">
-                <button type="button" class="btn btn-danger" onclick="konfirmasiHapusMultiple()"><i
-                        class="fa-solid fa-trash" style="color: #ffffff;"></i> Hapus Artikel Terpilih</button>
+                <button type="button" class="btn btn-danger" onclick="konfirmasiHapusMultiple()">
+                    <i class="fa-solid fa-trash" style="color: #ffffff;"></i> Hapus Artikel Terpilih
+                </button>
             </div>
         </div>
     </div>
@@ -95,9 +93,7 @@ $paginatedArticles = array_slice($filteredArticles, $offset, $itemsPerPage);
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>
-                                <input type="checkbox" id="select-all">
-                            </th>
+                            <th><input type="checkbox" id="select-all"></th>
                             <th>No.</th>
                             <th>Nama Artikel</th>
                             <th>Terakhir Update</th>
@@ -111,34 +107,21 @@ $paginatedArticles = array_slice($filteredArticles, $offset, $itemsPerPage);
                         <?php foreach ($paginatedArticles as $article): ?>
                             <tr>
                                 <td>
-                                    <input type="checkbox" name="article_to_delete[]" value="<?= $article['id'] ?>"
-                                        id="hapusArtikelLink">
+                                    <input type="checkbox" name="article_to_delete[]" value="<?= $article['id'] ?>">
                                 </td>
-                                <td>
-                                    <?= $counter++; ?>
-                                </td>
+                                <td><?= $counter++; ?></td>
                                 <td class="col-4">
-                                    <p>
-                                        <?= $article['judul'] ?>
-                                    </p>
+                                    <p><?= $article['judul'] ?></p>
+                                </td>
+                                <td><p><?= $article['last_updated'] ?></p></td>
+                                <td><p><?= $article['pembuat'] ?></p></td>
+                                <td>
+                                    <span class="status-indicator <?= $article['status'] === 'aktif' ? 'aktif' : 'nonaktif' ?> mx-3"></span>
                                 </td>
                                 <td>
-                                    <p>
-                                        <?= $article['last_updated'] ?>
-                                    </p>
-                                </td>
-                                <td>
-                                    <p>
-                                        <?= $article['pembuat'] ?>
-                                    </p>
-                                </td>
-                                <td>
-                                    <span
-                                        class="status-indicator <?= $article['status'] === 'aktif' ? 'aktif' : 'nonaktif' ?> mx-3"></span>
-                                </td>
-                                <td>
-                                    <a href="<?= site_url('/editarticle/' . $article['id']) ?>"><button
-                                            class="btn btn-primary px-4" type="button">Edit</button></a>
+                                    <a href="<?= site_url('/editarticle/' . $article['id']) ?>">
+                                        <button class="btn btn-primary px-4" type="button">Edit</button>
+                                    </a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -147,8 +130,6 @@ $paginatedArticles = array_slice($filteredArticles, $offset, $itemsPerPage);
 
                 <!-- Display pagination links -->
                 <div class="pagination">
-                    
-
                     <?php $totalPages = ceil($totalItems / $itemsPerPage); ?>
                     <?php for ($i = 1; $i <= $totalPages; $i++): ?>
                         <?php $isActive = ($i === $page) ? 'active' : ''; ?>
@@ -170,27 +151,6 @@ $paginatedArticles = array_slice($filteredArticles, $offset, $itemsPerPage);
 
 <script>
     CKEDITOR.replace('konten');
-
-    document.addEventListener('DOMContentLoaded', function () {
-
-        const searchInput = document.getElementById('searchInput');
-        const articleRows = document.querySelectorAll('.table tbody tr');
-
-        searchInput.addEventListener('input', () => {
-            const searchKeyword = searchInput.value.trim().toLowerCase();
-
-            articleRows.forEach(row => {
-                const titleCell = row.querySelector('.col-4 p');
-                const title = titleCell.textContent.trim().toLowerCase();
-
-                if (title.includes(searchKeyword)) {
-                    row.style.display = 'table-row';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    });
 
     const selectAllCheckbox = document.getElementById('select-all');
     const checkboxes = document.querySelectorAll('input[name="article_to_delete[]"]');

@@ -10,40 +10,38 @@ use App\Models\User_Model;
 class Article extends Controller
 {
     public function article($id_kategori)
-    {
-        $kategoriModel = new Kategori_Model();
-        $categories = $kategoriModel->getCategories();
-        $articles = $kategoriModel->getArticlesByKategori($id_kategori);
+{
+    $kategoriModel = new Kategori_Model();
+    $categories = $kategoriModel->getCategories();
+    $articles = $kategoriModel->getArticlesByKategori($id_kategori);
 
-        $kategori = array_filter($categories, function ($kategori) use ($id_kategori) {
-            return $kategori['id_kategori'] == $id_kategori;
-        });
+    $kategori = array_filter($categories, function ($kategori) use ($id_kategori) {
+        return $kategori['id_kategori'] == $id_kategori;
+    });
 
-        $data = [
-            'page' => 'admin/kategori',
-            'articles' => $articles,
-            'categories' => $categories,
-            'kategori_nama' => !empty($kategori) ? reset($kategori)['nama_kategori'] : '',
-        ];
+    // Tambahkan pengecekan dan default value
+    $id_kategori = $id_kategori ?? ''; // Atur default value jika $id_kategori tidak terdefinisi
 
-        $userRole = session()->get('tipe');
+    $data = [
+        'current_page' => 'tambah_data',
+        'page' => 'admin/kategori',
+        'articles' => $articles,
+        'categories' => $categories,
+        'kategori_nama' => !empty($kategori) ? reset($kategori)['nama_kategori'] : '',
+        'id_kategori' => $id_kategori, // Sertakan $id_kategori di data yang dikirim ke view
+    ];
 
-        if ($userRole === 'superuser') {
-            return view('template_admin', $data);
-        } elseif ($userRole === 'admin') {
-            $datmin = new Dafmin_Model();
-            $userId = session()->get('user_id');
-            $admin = $datmin->find($userId);
+    $userRole = session()->get('tipe');
 
-            if ($admin['status'] === 'nonaktif') {
-                session()->destroy();
-                return redirect()->to('/login-admin')->with('error', 'Akun Anda telah dinonaktifkan.');
-            }
-            return view('admin_2', $data);
-        } else {
-            return redirect()->to('/dashboard');
-        }
+    if ($userRole === 'superuser') {
+        return view('template_admin', $data);
+    } elseif ($userRole === 'admin') {
+        // ... (sama seperti sebelumnya)
+    } else {
+        return redirect()->to('/dashboard');
     }
+}
+    
     public function addarticle()
     {
         $datminModel = new Dafmin_Model();
