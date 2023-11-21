@@ -1,7 +1,7 @@
 <?php
 // Define pagination parameters
 $page = isset($_GET['page']) ? intval($_GET['page']) : 1;
-$itemsPerPage = 2; // Set the number of items per page
+$itemsPerPage = 5; // Set the number of items per page
 
 function compareArticles($article1, $article2)
 {

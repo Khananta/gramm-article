@@ -10,7 +10,7 @@
             </div>
             <div class="form-group my-2">
                 <label for="konten">Konten</label>
-                <textarea class="form-control" id="konten" name="konten"><?= nl2br($artikel->konten) ?></textarea>
+                <textarea class="form-control" id="konten" name="konten"><?= ($artikel->konten) ?></textarea>
             </div>
             <div class="form-group my-2">
                 <label for="gambar">Gambar</label>

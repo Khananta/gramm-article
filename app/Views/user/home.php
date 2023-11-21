@@ -90,7 +90,7 @@ $is_searching = isset($_GET['search']) && !empty($_GET['search']);
                                 die('Koneksi ke database gagal: ' . mysqli_connect_error());
                             }
 
-                            $query_popular_slide = "SELECT * FROM tb_artikel WHERE status = 'aktif' ORDER BY RAND() LIMIT 3";
+                            $query_popular_slide = "SELECT * FROM tb_artikel WHERE status = 'aktif' ORDER BY RAND()";
                             $result_popular_slide = mysqli_query($conn, $query_popular_slide);
 
                             if ($result_popular_slide):
@@ -145,7 +145,7 @@ $is_searching = isset($_GET['search']) && !empty($_GET['search']);
                 WHERE judul LIKE '%$search%' AND status = 'aktif'
             ) a 
             INNER JOIN tb_kategori k ON a.id_kategori = k.id_kategori
-            WHERE a.row_num <= 2 AND k.status = 'aktif'
+            WHERE a.row_num <= 3 AND k.status = 'aktif'
             ORDER BY k.id_kategori, a.id";
 
         $result = mysqli_query($conn, $query);
