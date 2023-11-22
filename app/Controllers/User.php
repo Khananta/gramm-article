@@ -9,10 +9,17 @@ class User extends BaseController
 {
     public function home()
     {
+        $artikelModel = new User_Model();
+        $article = $artikelModel->findAll();
+
         $data = [
-            'current_page' => 'home',
+            'current_page' => 'home', // Definisi $current_page
             'page' => 'user/home',
+            'artikel' => $article
         ];
+
+        // dd($article[0]['judul']);
+
         return view('template', $data);
     }
 
@@ -24,6 +31,7 @@ class User extends BaseController
         if ($article) {
             if ($article['status'] === 'aktif') {
                 $data = [
+                    'current_page' => 'home',
                     'page' => 'user/artikel',
                     'artikel' => $article
                 ];
