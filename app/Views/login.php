@@ -50,40 +50,14 @@
                             <input type="password" name="password" placeholder="Enter password" class="form-control"
                                 id="exampleInputPassword1">
                         </div>
-                        <div class="mt-3 text-end">
-                            <a href="#" class="text-decoration-none text-light" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Lupa password?</a>
-                        </div>
-                        <button type="submit" class="btn btn-danger rounded-2 px-5 mt-4 col-12 py-3">Login</button>
+                        <button type="submit" class="btn btn-danger rounded-2 px-5 mt-5 col-12 py-3">Login</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal Lupa Password -->
-    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="forgotPasswordModalLabel">Lupa Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="forgotPasswordForm">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Masukan email anda" required>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" class="btn btn-primary" id="sendPasswordResetEmail">Kirim Sandi ke Email</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
 </body>
 

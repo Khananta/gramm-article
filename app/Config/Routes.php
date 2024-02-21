@@ -51,7 +51,7 @@ $routes->get('/login-admin', 'Auth::index');
 $routes->post('register', 'Auth::processRegistration');
 $routes->get('logout', 'Auth::logout');
 
-
+$routes->get('exportpdf', 'Dashboard::exportpdf');
 
 $routes->post('/forgot-password', 'Auth::sendPasswordResetEmail');
 // $routes->get('admin/toggleAdminStatus/(:num)/(:alpha)', 'Admin::toggleAdminStatus/$1/$2');

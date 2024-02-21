@@ -177,4 +177,44 @@ class Dashboard extends Controller
         // Return the response as JSON
         return $this->response->setJSON($response);
     }
+
+    public function exportpdf()
+    {
+        $datmin = new Dafmin_Model();
+        $admins = $datmin->getAdminData();
+
+        // Create PDF with landscape orientation
+        $pdf = new \TCPDF('L', 'mm', 'A4'); // 'L' for landscape
+        $pdf->SetAutoPageBreak(true, 10);
+        $pdf->AddPage();
+
+        // Set font
+        $pdf->SetFont('times', '', 12);
+
+        // Header
+        $pdf->Cell(30, 10, 'ID', 1);
+        $pdf->Cell(40, 10, 'Nama', 1);
+        $pdf->Cell(40, 10, 'Email', 1);
+        $pdf->Cell(40, 10, 'Username', 1);
+        $pdf->Cell(40, 10, 'Last Updated', 1);
+        $pdf->Cell(30, 10, 'Tipe', 1);
+        $pdf->Cell(30, 10, 'Status', 1);
+        $pdf->Ln(); // Move to the next line
+
+        // Data
+        foreach ($admins as $admin) {
+            $pdf->Cell(30, 10, $admin['id'], 1);
+            $pdf->Cell(40, 10, $admin['nama'], 1);
+            $pdf->Cell(40, 10, $admin['email'], 1);
+            $pdf->Cell(40, 10, $admin['username'], 1);
+            $pdf->Cell(40, 10, $admin['last_updated'], 1);
+            $pdf->Cell(30, 10, $admin['tipe'], 1);
+            $pdf->Cell(30, 10, $admin['status'], 1);
+            $pdf->Ln(); // Move to the next line
+        }
+
+        // Output PDF to the browser
+        $pdf->Output('admin_data.pdf', 'D');
+    }   
+
 }

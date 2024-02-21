@@ -4,7 +4,7 @@
     <div class="card-header col text-start">
         <div class="row align-items-center">
             <div
-                class="col-xl-6 col-lg-4 col-md-2 col-sm-2 col-xs-12 text-xl-start text-lg-start text-md-start text-sm-start">
+                class="col-xl-4 col-lg-2 col-md-2 col-sm-2 col-xs-12 text-xl-start text-lg-start text-md-start text-sm-start">
                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
                     <span class="text"><i class="fa-solid fa-plus" style="color: #ffffff;"></i> Tambah Admin</span>
                 </button>
@@ -70,7 +70,10 @@
                 </div>
             </div>
             <div
-                class="col-xl-6 col-lg-8 col-sm-10 col-md-10 col-xs-12 text-xl-end text-lg-end text-md-end text-sm-end mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0">
+                class="col-xl-8 col-lg-10 col-sm-10 col-md-10 col-xs-12 text-xl-end text-lg-end text-md-end text-sm-end mt-xl-0 mt-lg-0 mt-md-0 mt-sm-0">
+                <button type="button" class="btn btn-danger" onclick="exportPDF()">
+                    <i class="fa-solid fa-file-pdf" style="color: #ffffff;"></i> Export PDF
+                </button>
                 <button type="button" class="btn btn-success" onclick="updateAdminStatus('aktif')">
                     <i class="fa-solid fa-check" style="color: #ffffff;"></i> Aktifkan Terpilih
                 </button>
@@ -446,6 +449,12 @@ if ($response && $response['status'] === 'success'):
                 editForm.submit();
             }
         });
+    }
+</script>
+
+<script>
+    function exportPDF() {
+        window.location.href = '<?= site_url('exportpdf') ?>';
     }
 </script>
 
